@@ -1,0 +1,17 @@
+{
+    "name": "tik/web-socket",
+    "description": "WebSockets Package",
+    "type": "library",
+    "require-dev": {
+        "hoa/websocket": "~3.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tica Bogdan",
+            "email": "tica.bogdan@yahoo.ro"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
