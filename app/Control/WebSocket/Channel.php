@@ -6,7 +6,7 @@
  * Time: 21:24
  */
 
-namespace App\TiCTRL\WebSocket;
+namespace App\Control\WebSocket;
 
 
 use Hoa\Websocket\Node;

@@ -2,6 +2,7 @@
 
 namespace Tik\WebSocket\Server;
 
+use Control\WebSocket\DevicesServer;
 use Illuminate\Console\Command;
 
 class WebSocketServerStartCommand extends Command
@@ -40,7 +41,6 @@ class WebSocketServerStartCommand extends Command
     public function handle()
     {
         $class = $this->argument('class');
-
 
         if(!is_subclass_of($class,WebSocketServerAbstract::class)){
             throw new \Exception('Class should extend: ' . WebSocketServerAbstract::class);

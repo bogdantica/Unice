@@ -6,8 +6,9 @@
  * Time: 18:55
  */
 
-namespace App\TiCTRL\WebSocket;
+namespace App\Control\WebSocket;
 
+use App\Control\WebSocket\LookUps\MessageTypes;
 use Hoa\Event\Bucket;
 use Hoa\Socket\Connection\Connection;
 use Hoa\Websocket\Server;
@@ -20,12 +21,6 @@ use Tik\WebSocket\Server\WebSocketServerAbstract;
  */
 class DevicesServer extends WebSocketServerAbstract
 {
-
-    /**
-     *  CODES
-     */
-    const ACCEPTED_TO_CHANNEL = 100;
-    const ALREADY_TO_CHANNEL = 120;
 
     /**
      * DevicesServer constructor.
@@ -70,11 +65,15 @@ class DevicesServer extends WebSocketServerAbstract
      */
     public static function onMessage(Bucket $event)
     {
-        $source = $event->getSource();
-        $connection = $event->getSource()->getConnection();
-        $node = $connection->getCurrentNode();
-        $nodes = new Collection($connection->getNodes());
-        static::parseMessageEvent($source, $connection, $node, $nodes, $event->getData()['message']);
+        try {
+            $source = $event->getSource();
+            $connection = $event->getSource()->getConnection();
+            $node = $connection->getCurrentNode();
+            $nodes = new Collection($connection->getNodes());
+            static::parseMessageEvent($source, $connection, $node, $nodes, $event->getData()['message']);
+        } catch (\Exception $exception) {
+            \Log::error($exception->getMessage());
+        }
     }
 
     /**
@@ -88,26 +87,30 @@ class DevicesServer extends WebSocketServerAbstract
     {
         $message = json_decode($message);
 
-        switch (true) {
+        switch ($message->code) {
             //todo break cases this by a set of codes.
-            case !empty($message->channel):
+            case MessageTypes::REQUEST_JOIN_TO_CHANNEL:
                 //join node to channel and send a response code.
                 $response = static::joinChannel($node, $message->channel);
                 static::send($source, $response, $node);
 
                 break;
 
-            case !empty($message->listeners->message):
+            case MessageTypes::APP_TO_DEVICE:
                 //answer to others nodes from channel.
-                foreach ($nodes as $otherNode) {
-                    if ($node != $otherNode) {
+
+                $nodes->each(function ($otherNode) use ($node, $source, $message) {
+                    if ($otherNode != $node) {
+                        //create a class in order to handle this type of actions.
                         $redirect = (object)[
+                            'payload' => [],
                             'channel' => $node->channel,
-                            'message' => $message->listeners->message
+                            'code' => MessageTypes::APP_TO_DEVICE
                         ];
                         static::send($source, $redirect, $otherNode);
                     }
-                }
+                });
+
                 break;
             default:
                 static::send($source, 'mesaj', $node);
@@ -122,7 +125,8 @@ class DevicesServer extends WebSocketServerAbstract
      */
     public static function send(Server $source, $message, ChannelNode $node = null)
     {
-        return $source->send(json_encode($message), $node);
+//        return
+        $source->send(json_encode($message), $node);
     }
 
     /**
@@ -137,12 +141,12 @@ class DevicesServer extends WebSocketServerAbstract
 
             $response = (object)[
                 'channel' => $channel,
-                'code' => static::ACCEPTED_TO_CHANNEL
+                'code' => MessageTypes::ACCEPTED_TO_CHANNEL
             ];
         } else {
             $response = (object)[
                 'channel' => $channel,
-                'code' => static::ALREADY_TO_CHANNEL
+                'code' => MessageTypes::ALREADY_TO_CHANNEL
             ];
         }
 
