@@ -8,7 +8,7 @@
 
 namespace App\Control\WebSocket;
 
-use App\Control\WebSocket\LookUps\MessageTypes;
+use App\Control\WebSocket\Message\Message;
 use Hoa\Event\Bucket;
 use Hoa\Socket\Connection\Connection;
 use Hoa\Websocket\Server;
@@ -19,9 +19,8 @@ use Tik\WebSocket\Server\WebSocketServerAbstract;
  * Class DevicesServer
  * @package App\TiCTRL\WebSocket
  */
-class DevicesServer extends WebSocketServerAbstract
+class CommunicationServer extends WebSocketServerAbstract
 {
-
     /**
      * DevicesServer constructor.
      * @param $protocol
@@ -65,11 +64,15 @@ class DevicesServer extends WebSocketServerAbstract
      */
     public static function onMessage(Bucket $event)
     {
+
+
         try {
             $source = $event->getSource();
             $connection = $event->getSource()->getConnection();
             $node = $connection->getCurrentNode();
-            $nodes = new Collection($connection->getNodes());
+            $nodes = (new Collection($connection->getNodes()))->reject(function ($item) use ($node) {
+                return $node == $item; //other nodes...
+            });
             static::parseMessageEvent($source, $connection, $node, $nodes, $event->getData()['message']);
         } catch (\Exception $exception) {
             \Log::error($exception->getMessage());
@@ -82,39 +85,34 @@ class DevicesServer extends WebSocketServerAbstract
      * @param ChannelNode $node
      * @param Collection $nodes
      * @param string $message
+     * @return mixed
      */
     public static function parseMessageEvent(Server $source, Connection $connection, ChannelNode $node, Collection $nodes, string $message)
     {
-        $message = json_decode($message);
+        $message = new Message($message);
+
+        if (!Message::validateMessage($message)) {
+            return false;
+        }
 
         switch ($message->code) {
-            //todo break cases this by a set of codes.
-            case MessageTypes::REQUEST_JOIN_TO_CHANNEL:
+
+            case Message::UID_CHECK:
                 //join node to channel and send a response code.
-                $response = static::joinChannel($node, $message->channel);
-                static::send($source, $response, $node);
-
+                $node->join($source, $message, $nodes) ? true : Message::appToUniceIdCheckFail($source, $node);
+                break;
+            case Message::APP_TO_UNICE:
+                Message::appToUnice($source, $node, $nodes, $message);
                 break;
 
-            case MessageTypes::APP_TO_DEVICE:
-                //answer to others nodes from channel.
-
-                $nodes->each(function ($otherNode) use ($node, $source, $message) {
-                    if ($otherNode != $node) {
-                        //create a class in order to handle this type of actions.
-                        $redirect = (object)[
-                            'payload' => [],
-                            'channel' => $node->channel,
-                            'code' => MessageTypes::APP_TO_DEVICE
-                        ];
-                        static::send($source, $redirect, $otherNode);
-                    }
-                });
-
+            case Message::UNICE_TO_APP:
+                Message::uniceToApp($source, $node, $nodes, $message);
                 break;
+
             default:
-                static::send($source, 'mesaj', $node);
+                $source->close();
         }
+        return false;
     }
 
     /**
@@ -123,34 +121,9 @@ class DevicesServer extends WebSocketServerAbstract
      * @param ChannelNode|null $node
      * @return mixed
      */
-    public static function send(Server $source, $message, ChannelNode $node = null)
+    public static function send(Server $source, Message $message, ChannelNode $node = null)
     {
-//        return
-        $source->send(json_encode($message), $node);
-    }
-
-    /**
-     * @param ChannelNode $node
-     * @param string $channel
-     * @return object
-     */
-    public static function joinChannel(ChannelNode &$node, string $channel)
-    {
-        if ($node->channel != $channel) {
-            $node->channel = $channel;
-
-            $response = (object)[
-                'channel' => $channel,
-                'code' => MessageTypes::ACCEPTED_TO_CHANNEL
-            ];
-        } else {
-            $response = (object)[
-                'channel' => $channel,
-                'code' => MessageTypes::ALREADY_TO_CHANNEL
-            ];
-        }
-
-        return $response;
+        return $source->send((string)$message, $node) ?? false;
     }
 
 }
