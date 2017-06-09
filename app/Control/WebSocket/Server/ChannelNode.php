@@ -6,7 +6,7 @@
  * Time: 21:05
  */
 
-namespace App\Control\WebSocket;
+namespace App\Control\WebSocket\Server;
 
 
 use App\Control\WebSocket\Message\Message;
@@ -22,8 +22,8 @@ use Illuminate\Support\Collection;
 class ChannelNode extends Node
 {
     const TYPES = [
-        'unice',
-        'app' //server application, that handle the controll messages for unice devices...
+        'unice', // Unice Device
+        'app' //server application, that handle the control messages for Unice Devices...
     ];
 
     /**
@@ -37,8 +37,7 @@ class ChannelNode extends Node
     public function join(Server $source, Message $message, Collection $nodes)
     {
 //        $this->type = Unice::getTypeByUid($message->sender); //todo
-
-        $this->type = $message->payload->type;
+        $this->type = $message->payload->type; //todo remove
 
         if (!$this->type) {
             return false;
@@ -52,10 +51,12 @@ class ChannelNode extends Node
                 );
                 return false;
                 break;
+
             case 'app':
                 $this->channel = 'channel-' . $message->payload->uniceId;
                 $this->uid = 'app'; //todo hardcoded until future improvements.
                 break;
+
             case 'unice':
                 $this->channel = 'channel-' . $message->sender;
                 $this->uid = $message->sender;
@@ -65,22 +66,11 @@ class ChannelNode extends Node
                 $source->close(
                     Connection::CLOSE_NORMAL,
                     'Invalid type'
-                );;
+                );
         }
 
         //restricted just to 2 nodes per channel..
         $anotherNode = $nodes->first();
-        $notUniqueUnice = $this->type == 'unice' && $anotherNode->getType() == 'unice';
-        $notUniqueApp = $this->type == 'app' && $anotherNode->getType() == 'app';
-
-        if ($notUniqueUnice || $notUniqueApp) {
-            $source->close(
-                Connection::CLOSE_NORMAL,
-                'Unice Device Already Connected'
-            );
-            return false;
-        }
-
         return $this->getUid();
     }
 

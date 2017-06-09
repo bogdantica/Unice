@@ -12,8 +12,23 @@
 */
 
 Route::get('/', function () {
-
-    phpinfo();
-
     return view('welcome');
+});
+
+Route::get('/test', function () {
+
+    $unice = \App\Models\Unice\Unice::with([
+        'type',
+        'type.unices',
+        'devices',
+        'devices.unice',
+        'devices.type',
+        'devices.type.devices',
+        'devices.state',
+        'devices.state.device',
+    ])
+        ->first();
+
+    dd($unice->toArray());
+
 });

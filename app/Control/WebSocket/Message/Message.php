@@ -8,8 +8,8 @@
 
 namespace App\Control\WebSocket\Message;
 
-use App\Control\WebSocket\ChannelNode;
-use App\Control\WebSocket\CommunicationServer;
+use App\Control\WebSocket\Server\ChannelNode;
+use App\Control\WebSocket\Server\CommunicationServer;
 use Hoa\Websocket\Connection;
 use Hoa\Websocket\Server;
 use Illuminate\Support\Collection;
@@ -28,7 +28,6 @@ class Message extends MessageAbstract
     const UNICE_TO_APP = 250;
 
     protected $attributes = [];
-
 
     public static function appToUniceIdCheckFail(Server $source, ChannelNode $node)
     {

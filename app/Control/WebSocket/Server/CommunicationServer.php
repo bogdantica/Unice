@@ -6,7 +6,7 @@
  * Time: 18:55
  */
 
-namespace App\Control\WebSocket;
+namespace App\Control\WebSocket\Server;
 
 use App\Control\WebSocket\Message\Message;
 use Hoa\Event\Bucket;
@@ -27,7 +27,7 @@ class CommunicationServer extends WebSocketServerAbstract
      * @param $ipDomain
      * @param $port
      */
-    function __construct($protocol, $ipDomain, $port)
+    function __construct($protocol = null, $ipDomain = null, $port = null)
     {
         parent::__construct($protocol, $ipDomain, $port);
 
@@ -64,8 +64,6 @@ class CommunicationServer extends WebSocketServerAbstract
      */
     public static function onMessage(Bucket $event)
     {
-
-
         try {
             $source = $event->getSource();
             $connection = $event->getSource()->getConnection();
@@ -99,7 +97,7 @@ class CommunicationServer extends WebSocketServerAbstract
 
             case Message::UID_CHECK:
                 //join node to channel and send a response code.
-                $node->join($source, $message, $nodes) ? true : Message::appToUniceIdCheckFail($source, $node);
+                return $node->join($source, $message, $nodes);
                 break;
             case Message::APP_TO_UNICE:
                 Message::appToUnice($source, $node, $nodes, $message);
