@@ -24,14 +24,18 @@ class CommunicationServer extends WebSocketServerAbstract
     /**
      * DevicesServer constructor.
      * @param $protocol
-     * @param $ipDomain
+     * @param $host
      * @param $port
      */
-    function __construct($protocol = null, $ipDomain = null, $port = null)
+    function __construct($protocol = null, $host = null, $port = null)
     {
-        parent::__construct($protocol, $ipDomain, $port);
+        $protocol = is_null($protocol) ? config('control.uniceCommunication.connection.protocol', 'ws') : $protocol;
+        $host = is_null($host) ? config('control.uniceCommunication.connection.host', '127.0.0.1') : $host;
+        $port = is_null($port) ? config('control.uniceCommunication.connection.port', '98765') : $port;
 
-        $this->server = new \Hoa\Websocket\Server(
+        parent::__construct($protocol, $host, $port);
+
+        $this->server = new Server(
             new \Hoa\Socket\Server($this->getURI())
         );
 

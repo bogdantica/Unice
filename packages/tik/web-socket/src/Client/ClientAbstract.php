@@ -41,11 +41,11 @@ class ClientAbstract
      * @param string $host
      * @param string $port
      */
-    public function __construct($protocol = null, $host = null, $port = null)
+    public function __construct($protocol = 'ws', $host = '127.0.0.1', $port = '9876')
     {
-        $this->protocol = is_null($protocol) ? config('control.uniceCommunication.connection.protocol', 'ws') : $protocol;
-        $this->host = is_null($host) ? config('control.uniceCommunication.connection.host', '127.0.0.1') : $host;
-        $this->port = is_null($port) ? config('control.uniceCommunication.connection.port', '9876') : $port;
+        $this->protocol = $protocol;
+        $this->host = $host;
+        $this->port = $port;
     }
 
     /**

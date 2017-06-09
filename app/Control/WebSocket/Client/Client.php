@@ -18,6 +18,10 @@ class Client extends ClientAbstract
 
     public function __construct($protocol = null, $host = null, $port = null)
     {
+        $protocol = is_null($protocol) ? config('control.uniceCommunication.connection.protocol', 'ws') : $protocol;
+        $host = is_null($host) ? config('control.uniceCommunication.connection.host', '127.0.0.1') : $host;
+        $port = is_null($port) ? config('control.uniceCommunication.connection.port', '98765') : $port;
+
         parent::__construct($protocol, $host, $port);
     }
 
