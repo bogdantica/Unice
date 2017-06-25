@@ -8,7 +8,7 @@
 
 namespace App\Control\WebSocket\Server;
 
-use App\Control\WebSocket\Message\Message;
+use App\Control\Unice\SDK\Message\Message;
 use Hoa\Event\Bucket;
 use Hoa\Socket\Connection\Connection;
 use Hoa\Websocket\Server;
@@ -44,7 +44,6 @@ class CommunicationServer extends WebSocketServerAbstract
         $this->server->on('message', [$this, 'onMessage']);
 
         $this->server->getConnection()->setNodeName(ChannelNode::class);
-
     }
 
     /**
@@ -60,7 +59,13 @@ class CommunicationServer extends WebSocketServerAbstract
      */
     public static function onClose(Bucket $event)
     {
-        //todo notify app that a device is down..
+        $node = $event->getSource()->getConnection()->getCurrentNode();
+
+        $unice = $node->getUnice();
+
+        if (!is_null($unice)) {
+            $unice->closed();
+        }
     }
 
     /**
@@ -68,15 +73,22 @@ class CommunicationServer extends WebSocketServerAbstract
      */
     public static function onMessage(Bucket $event)
     {
+
+        $source = $event->getSource();
+        $connection = $source->getConnection();
+        $node = $connection->getCurrentNode();
+        $nodes = (new Collection($connection->getNodes()))->reject(function ($item) use ($node) {
+            return $node == $item; //other nodes...
+        });
+
+        $message = $event->getData()['message'];
+
         try {
-            $source = $event->getSource();
-            $connection = $event->getSource()->getConnection();
-            $node = $connection->getCurrentNode();
-            $nodes = (new Collection($connection->getNodes()))->reject(function ($item) use ($node) {
-                return $node == $item; //other nodes...
-            });
-            static::parseMessageEvent($source, $connection, $node, $nodes, $event->getData()['message']);
+
+            static::parseMessageEvent($source, $connection, $node, $nodes, $message);
+
         } catch (\Exception $exception) {
+
             \Log::error($exception->getMessage());
         }
     }
@@ -94,25 +106,27 @@ class CommunicationServer extends WebSocketServerAbstract
         $message = new Message($message);
 
         if (!Message::validateMessage($message)) {
+            $node->reject($source, 'Invalid Message');
             return false;
         }
 
         switch ($message->code) {
-
             case Message::UID_CHECK:
-                //join node to channel and send a response code.
                 return $node->join($source, $message, $nodes);
                 break;
-            case Message::APP_TO_UNICE:
-                Message::appToUnice($source, $node, $nodes, $message);
+            case Message::BASE_TO_UNICE:
+                Message::baseToUnice($source, $node, $nodes, $message);
                 break;
 
-            case Message::UNICE_TO_APP:
+            case Message::UNICE_TO_BASE:
                 Message::uniceToApp($source, $node, $nodes, $message);
                 break;
 
             default:
-                $source->close();
+                $source->close(
+                    \Hoa\Websocket\Connection::CLOSE_NORMAL,
+                    'Invalid Message Type'
+                );
         }
         return false;
     }
@@ -125,7 +139,7 @@ class CommunicationServer extends WebSocketServerAbstract
      */
     public static function send(Server $source, Message $message, ChannelNode $node = null)
     {
-        return $source->send((string)$message, $node) ?? false;
+        return $source->send($message->__toString(), $node) ?? false;
     }
 
 }

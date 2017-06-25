@@ -13,7 +13,7 @@ class Unice extends Model
 
     use SoftDeletes;
 
-    protected $dates = ['deleted_at'];
+    protected $dates = ['deleted_at','last_sync','last_reported'];
     protected $fillable = array('unice_name', 'unice_uid', 'online', 'unice_type_id');
 
     public function type()

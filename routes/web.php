@@ -10,6 +10,27 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+Auth::routes();
+
+
+Route::group([], function () {
+
+    Route::get('/unices', [
+        'as' => 'unice.all',
+        'uses' => 'Unice\UniceController@all'
+    ]);
+
+    Route::get('/unice/{unice}',[
+        'as' => 'unice.unice',
+        'uses' => 'Unice\UniceController@unice'
+    ]);
+
+    Route::post('/unice/device/update-state',[
+        'as' => 'unice.device.update-state',
+        'uses' => 'Unice\UniceController@updateState'
+    ]);
+});
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,18 +38,24 @@ Route::get('/', function () {
 
 Route::get('/test', function () {
 
-    $unice = \App\Models\Unice\Unice::with([
-        'type',
-        'type.unices',
-        'devices',
-        'devices.unice',
-        'devices.type',
-        'devices.type.devices',
-        'devices.state',
-        'devices.state.device',
-    ])
-        ->first();
+    clientTes();
 
-    dd($unice->toArray());
+
+    die;
+
+
+    $socket = new \Hoa\Socket\Server('ws://127.0.0.1');
+    $serve = new \Hoa\Websocket\Server($socket);
+
+
+    $node = new \App\Control\WebSocket\Server\ChannelNode('',$serve,$socket);
+
+    $message = new \App\Control\Unice\SDK\Message\Message('{"code":100,"sender":"base_client_12349876","receiver" : "rin_unice_1234"}');
+
+    $node->join($serve,$message,collect());
+
 
 });
+
+
+Route::get('/home', 'HomeController@index')->name('home');

@@ -7,20 +7,24 @@ class MapUniceTypeTableSeeder extends Seeder {
 
 	public function run()
 	{
-		//DB::table('MapUniceTypes')->delete();
+        MapUniceType::create(array(
+            'unice_type_id' => MapUniceType::UNICE_BASE,
+            'type_name' => 'unice_base',
+            'type_display' => 'Unice Base'
+        ));
 
 		// UniceDevice100
 		MapUniceType::create(array(
-				'unice_type_id' => 100,
-				'type_name' => 'unice_device_100',
-				'type_display' => 'Unice Device_100'
+				'unice_type_id' => MapUniceType::UNICE_DEVICE_1000,
+				'type_name' => 'unice_device_1000',
+				'type_display' => 'Unice Device 1000'
 			));
 
 		// UniceDevice200
 		MapUniceType::create(array(
-				'unice_type_id' => 200,
-				'type_name' => 'unice_device_200',
-				'type_display' => 'Unice Device 200'
+				'unice_type_id' => MapUniceType::UNICE_DEVICE_2000,
+				'type_name' => 'unice_device_2000',
+				'type_display' => 'Unice Device 2000'
 			));
 	}
 }

@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MapUniceType extends Model 
 {
+    const UNICE_BASE = 10;
+
+    const UNICE_DEVICE_1000 = 1000;
+    const UNICE_DEVICE_2000 = 2000;
+
+
 
     protected $table = 'map_unice_types';
     public $timestamps = true;

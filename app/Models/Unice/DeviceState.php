@@ -13,8 +13,8 @@ class DeviceState extends Model
 
     use SoftDeletes;
 
-    protected $dates = ['deleted_at','last_time_state_sended','last_time_state_reported'];
-    protected $fillable = array('device_id', 'state_current', 'state_target', 'state_target_real', 'last_time_state_sended', 'last_time_state_reported', 'manual_control');
+    protected $dates = ['deleted_at','last_time_target_updated'];
+    protected $fillable = array('device_id', 'state_current', 'state_target', 'state_target_real', 'last_time_target_updated', 'manual_control');
 
     public function device()
     {

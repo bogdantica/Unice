@@ -15,8 +15,9 @@ class CreateStateDevicesTable extends Migration {
 			$table->string('state_current')->index();
 			$table->string('state_target')->nullable()->index();
 			$table->string('state_target_real')->nullable()->index();
-			$table->datetime('last_time_state_sended')->nullable();
-			$table->datetime('last_time_state_reported')->nullable();
+
+			$table->datetime('last_time_target_updated')->nullable();
+
 			$table->boolean('manual_control')->index()->default(true);
 		});
 	}

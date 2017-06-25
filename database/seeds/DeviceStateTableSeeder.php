@@ -16,8 +16,7 @@ class DeviceStateTableSeeder extends Seeder
             'state_current' => false,
             'state_target' => false,
             'state_target_real' => false,
-            'last_time_state_sended' => \Carbon\Carbon::now(),
-            'last_time_state_reported' => \Carbon\Carbon::now(),
+            'last_time_target_updated' => \Carbon\Carbon::now(),
             'manual_control' => false
         ));
     }

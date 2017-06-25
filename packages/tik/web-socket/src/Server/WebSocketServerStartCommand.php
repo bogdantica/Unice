@@ -17,7 +17,7 @@ class WebSocketServerStartCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'ws:start {class} {default?}';
+    protected $signature = 'ws:start {class=WsServer} {--default=true}';
 
     /**
      * The console command description.
@@ -34,7 +34,7 @@ class WebSocketServerStartCommand extends Command
     /**
      * Create a new command instance.
      *
-     * @return void
+     *
      */
     public function __construct()
     {
@@ -44,11 +44,13 @@ class WebSocketServerStartCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     *
      */
     public function handle()
     {
         $class = $this->argument('class');
+        $default = $this->option('default');
+        $default = ($default == 'false' || $default == '0') ? false: true;
 
         if (!is_subclass_of($class, WebSocketServerAbstract::class)) {
             throw new \Exception('Class should extend: ' . WebSocketServerAbstract::class);
@@ -58,7 +60,7 @@ class WebSocketServerStartCommand extends Command
         $host = config('control.uniceCommunication.connection.host', '127.0.0.1');
         $port = config('control.uniceCommunication.connection.port', '9876');
 
-        if (!$this->argument('default')) {
+        if (!$default) {
             $protocol = $this->ask('Protocol:', $protocol);
             $host = $this->ask('Host:', $host);
             $port = $this->ask('Port:', $port);

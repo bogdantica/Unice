@@ -9,7 +9,9 @@
 namespace App\Control\WebSocket\Server;
 
 
-use App\Control\WebSocket\Message\Message;
+use App\Control\Unice\SDK\Message\Message;
+use App\Control\Unice\SDK\Unice\Unice;
+use App\Models\Unice\MapUniceType;
 use Hoa\Websocket\Connection;
 use Hoa\Websocket\Node;
 use Hoa\Websocket\Server;
@@ -21,60 +23,82 @@ use Illuminate\Support\Collection;
  */
 class ChannelNode extends Node
 {
-    const TYPES = [
-        'unice', // Unice Device
-        'app' //server application, that handle the control messages for Unice Devices...
-    ];
 
     /**
      * @var string
      */
-    protected $channel = 'default-channel';
+    protected $channel = 'lobby';
 
+    /**
+     * @var Unice
+     */
+    protected $unice;
+
+    /**
+     * @var bool
+     */
     protected $type = false;
+    /**
+     * @var bool
+     */
     protected $uid = false;
 
+    /**
+     * @param Server $source
+     * @param Message $message
+     * @param Collection $nodes
+     * @return bool
+     */
     public function join(Server $source, Message $message, Collection $nodes)
     {
-//        $this->type = Unice::getTypeByUid($message->sender); //todo
-        $this->type = $message->payload->type; //todo remove
+        $unice = Unice::getByUid($message->sender, false);
 
-        if (!$this->type) {
+        if (!$unice) {
+            $this->reject($source, 'Invalid UID');
             return false;
         }
 
+        $this->unice = $unice;
+
+        $this->type = $this->unice->getType();
+
         switch ($this->type) {
-            case false:
-                $source->close(
-                    Connection::CLOSE_NORMAL,
-                    'Invalid uid'
-                );
-                return false;
+            //base appplication
+            case MapUniceType::UNICE_BASE:
+                $receiverId = $message->receiver;
+                $this->channel = 'channel-' . $receiverId;
+                $this->uid = $message->sender;
                 break;
-
-            case 'app':
-                $this->channel = 'channel-' . $message->payload->uniceId;
-                $this->uid = 'app'; //todo hardcoded until future improvements.
-                break;
-
-            case 'unice':
+            //for all unices
+            default:
                 $this->channel = 'channel-' . $message->sender;
                 $this->uid = $message->sender;
                 break;
-
-            default:
-                $source->close(
-                    Connection::CLOSE_NORMAL,
-                    'Invalid type'
-                );
         }
 
-        //restricted just to 2 nodes per channel..
-        $anotherNode = $nodes->first();
+        dump('Joined ' . $this->uid . ' to ' . $this->channel);
         return $this->getUid();
     }
 
+    public function reject(Server $source, string $message = 'Rejected')
+    {
+        $source->close(
+            Connection::CLOSE_NORMAL,
+            $message
+        );
+    }
 
+    /**
+     * @return Unice
+     */
+    public function getUnice()
+    {
+        return $this->unice;
+    }
+
+    /**
+     * @return bool
+     */
     public function getUid()
     {
         return $this->uid;
@@ -89,6 +113,9 @@ class ChannelNode extends Node
         return $this->channel;
     }
 
+    /**
+     * @return bool
+     */
     public function getType()
     {
         return $this->type;
