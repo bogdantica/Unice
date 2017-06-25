@@ -36,26 +36,29 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/test', function () {
+if(env('APP_ENV') != 'production'){
+    Route::get('/test', function () {
 
-    clientTes();
-
-
-    die;
+        clientTes();
 
 
-    $socket = new \Hoa\Socket\Server('ws://127.0.0.1');
-    $serve = new \Hoa\Websocket\Server($socket);
+        die;
 
 
-    $node = new \App\Control\WebSocket\Server\ChannelNode('',$serve,$socket);
-
-    $message = new \App\Control\Unice\SDK\Message\Message('{"code":100,"sender":"base_client_12349876","receiver" : "rin_unice_1234"}');
-
-    $node->join($serve,$message,collect());
+        $socket = new \Hoa\Socket\Server('ws://127.0.0.1');
+        $serve = new \Hoa\Websocket\Server($socket);
 
 
-});
+        $node = new \App\Control\WebSocket\Server\ChannelNode('',$serve,$socket);
+
+        $message = new \App\Control\Unice\SDK\Message\Message('{"code":100,"sender":"base_client_12349876","receiver" : "rin_unice_1234"}');
+
+        $node->join($serve,$message,collect());
 
 
-Route::get('/home', 'HomeController@index')->name('home');
+    });
+}
+
+
+
+//Route::get('/home', 'HomeController@index')->name('home');
