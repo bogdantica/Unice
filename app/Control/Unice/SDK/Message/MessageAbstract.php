@@ -29,37 +29,45 @@ abstract class MessageAbstract
     ];
 
     /**
-     * Message attributes haystack.
-     * @var array
+     * @var string
      */
-    protected $attributes = [];
+
+    protected $sender;
 
     /**
-     * @var Unice
+     * @var string
      */
-    protected $unice;
+    protected $receiver;
 
     /**
-     *
-     * Setter method for message attributes
-     * @param $name
-     * @param $value
-     * @return bool
+     * @var string
      */
-    function __set($name, $value)
+    protected $type;
+
+    /**
+     * @var Payload
+     */
+    protected $payload;
+
+
+    public function getSender()
     {
-        return in_array($name, array_keys(static::MESSAGE_STRUCTURE)) ? $this->attributes[$name] = $value : false;
+        return $this->sender;
     }
 
-    /**
-     *
-     * Getter method for message attributes
-     * @param $name
-     * @return null
-     */
-    function __get($name)
+    public function getReceiver()
     {
-        return $this->attributes[$name] ?? null;
+        return $this->receiver;
+    }
+
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    public function getPayload()
+    {
+        return $this->payload;
     }
 
     /**
@@ -69,26 +77,14 @@ abstract class MessageAbstract
     function __construct($message)
     {
         if (is_string($message)) {
-            $message = json_decode($message);
+            $message = (object)json_decode($message);
         }
 
-        if (is_array($message) || is_object($message)) {
-            $message = is_array($message) ? (object)$message : $message;
-            foreach (array_keys(static::MESSAGE_STRUCTURE) as $name) {
+        $this->type = $message->type;
+        $this->receiver = $message->receiver;
+        $this->sender = $message->sender;
+        $this->payload = new Payload($this->payload);
 
-                switch ($name) {
-                    case 'payload':
-//                        break;
-                    default:
-                        $this->$name = $message->$name ?? null;
-                }
-            }
-            
-            $this->unice = is_null($this->sender) ? null : Unice::getByUid($this->sender);
-            return $this;
-        }
-
-        return false;
     }
 
     /**
@@ -105,31 +101,11 @@ abstract class MessageAbstract
      */
     function __toString()
     {
-        return json_encode((object)$this->attributes);
-    }
-
-    /**
-     * @param MessageAbstract $message
-     * @return bool
-     */
-    public static function validateMessage(MessageAbstract $message)
-    {
-        //todo
-        return true;
-    }
-
-    /**
-     * @param $code
-     * @param $sender
-     * @param Payload $payload
-     * @return object
-     */
-    public static function buildMessage($code, $sender, Payload $payload)
-    {
-        return (object)[
-            'code' => $code,
-            'sender' => $sender,
-            'payload' => $payload
-        ];
+        return json_encode((object)[
+            'type' => $this->type,
+            'sender' => $this->sender,
+            'receiver' => $this->receiver,
+            'payload' => $this->payload
+        ]);
     }
 }

@@ -8,7 +8,7 @@
 
 namespace App\Control\Unice\SDK\Message;
 
-use App\Control\WebSocket\Server\ChannelNode;
+use App\Control\WebSocket\Server\UniceNode;
 use App\Control\WebSocket\Server\CommunicationServer;
 use Hoa\Websocket\Connection;
 use Hoa\Websocket\Server;
@@ -29,7 +29,7 @@ class Message extends MessageAbstract
     protected $attributes = [];
 
 
-    public static function baseToUnice(Server $source, ChannelNode $node, Collection $nodes, Message $message)
+    public static function baseToUnice(Server $source, UniceNode $node, Collection $nodes, Message $message)
     {
         $nodes->each(function ($otherNode) use ($node, $source, $message) {
             if ($otherNode != $node) {
@@ -44,7 +44,7 @@ class Message extends MessageAbstract
         return true;
     }
 
-    public static function uniceToApp(Server $source, ChannelNode $node, Collection $nodes, $message)
+    public static function uniceToApp(Server $source, UniceNode $node, Collection $nodes, $message)
     {
         $node->getUnice()->incomingMessage();
         return true;

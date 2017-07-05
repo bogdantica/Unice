@@ -49,7 +49,7 @@ if(env('APP_ENV') != 'production'){
         $serve = new \Hoa\Websocket\Server($socket);
 
 
-        $node = new \App\Control\WebSocket\Server\ChannelNode('',$serve,$socket);
+        $node = new \App\Control\WebSocket\Server\UniceNode('',$serve,$socket);
 
         $message = new \App\Control\Unice\SDK\Message\Message('{"code":100,"sender":"base_client_12349876","receiver" : "rin_unice_1234"}');
 

@@ -2,8 +2,6 @@
 
 namespace Tik\WebSocket\Server;
 
-use Control\WebSocket\DevicesServer;
-use Hoa\Websocket\Server;
 use Illuminate\Console\Command;
 
 /**
@@ -17,7 +15,7 @@ class WebSocketServerStartCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'ws:start {class=WsServer} {--default=true}';
+    protected $signature = 'ws:start {class=ControlWs} {--default=true}';
 
     /**
      * The console command description.

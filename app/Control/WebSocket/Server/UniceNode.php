@@ -15,29 +15,24 @@ use App\Models\Unice\MapUniceType;
 use Hoa\Websocket\Connection;
 use Hoa\Websocket\Node;
 use Hoa\Websocket\Server;
-use Illuminate\Support\Collection;
 
 /**
- * Class ChannelNode
+ * Class UniceNode
  * @package App\TiCTRL\WebSocket
  */
-class ChannelNode extends Node
+class UniceNode extends Node
 {
 
     /**
      * @var string
      */
-    protected $channel = 'lobby';
+    protected $name = 'lobby';
 
     /**
      * @var Unice
      */
-    protected $unice;
+    protected $unice = false;
 
-    /**
-     * @var bool
-     */
-    protected $type = false;
     /**
      * @var bool
      */
@@ -46,38 +41,42 @@ class ChannelNode extends Node
     /**
      * @param Server $source
      * @param Message $message
-     * @param Collection $nodes
      * @return bool
      */
-    public function join(Server $source, Message $message, Collection $nodes)
+    public function join(Server $source, Message $message)
     {
-        $unice = Unice::getByUid($message->sender, false);
+        $unice = Unice::getByUid($message->getSender(), false);
 
         if (!$unice) {
-            $this->reject($source, 'Invalid UID');
-            return false;
+            return $this->reject($source);
         }
 
+        $this->setUnice($unice);
+
+        switch ($this->getUniceType()) {
+            case MapUniceType::UNICE_BASE:
+                $this->joinNode($message->getReceiver(), $message->getSender());
+                break;
+            default:
+                $this->joinNode($message->getSender(), $message->getSender());
+                break;
+        }
+
+        return $this->getUid();
+    }
+
+    protected function joinNode(string $name, string $senderUid)
+    {
+        $this->name = 'node-' . $name;
+
+        $this->uid = $senderUid;
+    }
+
+    protected function setUnice(Unice $unice)
+    {
         $this->unice = $unice;
 
-        $this->type = $this->unice->getType();
-
-        switch ($this->type) {
-            //base appplication
-            case MapUniceType::UNICE_BASE:
-                $receiverId = $message->receiver;
-                $this->channel = 'channel-' . $receiverId;
-                $this->uid = $message->sender;
-                break;
-            //for all unices
-            default:
-                $this->channel = 'channel-' . $message->sender;
-                $this->uid = $message->sender;
-                break;
-        }
-
-        dump('Joined ' . $this->uid . ' to ' . $this->channel);
-        return $this->getUid();
+        return $this;
     }
 
     public function reject(Server $source, string $message = 'Rejected')
@@ -86,6 +85,8 @@ class ChannelNode extends Node
             Connection::CLOSE_NORMAL,
             $message
         );
+
+        return true;
     }
 
     /**
@@ -116,9 +117,9 @@ class ChannelNode extends Node
     /**
      * @return bool
      */
-    public function getType()
+    public function getUniceType()
     {
-        return $this->type;
+        return $this->unice->getType();
     }
 
 }

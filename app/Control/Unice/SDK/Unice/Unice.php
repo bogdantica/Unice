@@ -66,7 +66,7 @@ class Unice
         return $this->uniceModel->unice_uid;
     }
 
-    public function closed()
+    public function offline()
     {
         //todo add cache remove.make a notification. remove cache
         $this->uniceModel->online = false;

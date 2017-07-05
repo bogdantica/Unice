@@ -16,10 +16,10 @@ use Illuminate\Support\Collection;
 use Tik\WebSocket\Server\WebSocketServerAbstract;
 
 /**
- * Class DevicesServer
+ * Class ControlWs
  * @package App\TiCTRL\WebSocket
  */
-class CommunicationServer extends WebSocketServerAbstract
+class ControlWs extends WebSocketServerAbstract
 {
     /**
      * DevicesServer constructor.
@@ -43,7 +43,7 @@ class CommunicationServer extends WebSocketServerAbstract
         $this->server->on('close', [$this, 'onClose']);
         $this->server->on('message', [$this, 'onMessage']);
 
-        $this->server->getConnection()->setNodeName(ChannelNode::class);
+        $this->server->getConnection()->setNodeName(UniceNode::class);
     }
 
     /**
@@ -64,7 +64,7 @@ class CommunicationServer extends WebSocketServerAbstract
         $unice = $node->getUnice();
 
         if (!is_null($unice)) {
-            $unice->closed();
+            $unice->offline();
         }
     }
 
@@ -85,7 +85,7 @@ class CommunicationServer extends WebSocketServerAbstract
 
         try {
 
-            static::parseMessageEvent($source, $connection, $node, $nodes, $message);
+            static::parseMessageEvent($source, $node, $nodes, $message);
 
         } catch (\Exception $exception) {
 
@@ -93,15 +93,16 @@ class CommunicationServer extends WebSocketServerAbstract
         }
     }
 
+
     /**
      * @param Server $source
      * @param Connection $connection
-     * @param ChannelNode $node
+     * @param UniceNode $node
      * @param Collection $nodes
      * @param string $message
      * @return mixed
      */
-    public static function parseMessageEvent(Server $source, Connection $connection, ChannelNode $node, Collection $nodes, string $message)
+    public static function parseMessageEvent(Server $source, UniceNode $node, Collection $nodes, string $message)
     {
         $message = new Message($message);
 
@@ -134,10 +135,10 @@ class CommunicationServer extends WebSocketServerAbstract
     /**
      * @param Server $source
      * @param $message
-     * @param ChannelNode|null $node
+     * @param UniceNode|null $node
      * @return mixed
      */
-    public static function send(Server $source, Message $message, ChannelNode $node = null)
+    public static function send(Server $source, Message $message, UniceNode $node = null)
     {
         return $source->send($message->__toString(), $node) ?? false;
     }
