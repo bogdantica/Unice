@@ -9,17 +9,14 @@ class CreateStateDevicesTable extends Migration {
 	{
 		Schema::create('state_devices', function(Blueprint $table) {
 			$table->increments('id');
-			$table->timestamps();
-			$table->softDeletes();
-			$table->integer('device_id')->unsigned();
-			$table->string('state_current')->index();
-			$table->string('state_target')->nullable()->index();
-			$table->string('state_target_real')->nullable()->index();
+            $table->integer('device_id')->unsigned();
 
-			$table->datetime('last_time_target_updated')->nullable();
+            $table->string('state')->index();
+            $table->string('target')->nullable()->index();
 
-			$table->boolean('manual_control')->index()->default(true);
-		});
+            $table->timestamps();
+            $table->softDeletes();
+        });
 	}
 
 	public function down()

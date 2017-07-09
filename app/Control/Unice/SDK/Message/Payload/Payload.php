@@ -10,7 +10,6 @@ namespace App\Control\Unice\SDK\Message\Payload;
 
 
 use App\Control\Unice\SDK\Device\Device;
-use App\Control\Unice\SDK\Unice\Unice;
 use Illuminate\Support\Collection;
 
 /**
@@ -19,41 +18,44 @@ use Illuminate\Support\Collection;
  */
 class Payload
 {
-
-    /**
-     *  Unice UID
-     * @var string
-     */
-    protected $sender;
-
+    const PAYLOAD_STRUCTURE = [
+//        'devices' => 'required|exists:unices,unice_uid',
+        'devices.*.uid' => 'exists:devices,device_uid',
+    ];
 
     /**
      * @var Collection
      */
     protected $devices;
 
-    /**
-     * @var Collection
-     */
     protected $commands;
 
     /**
-     * @var Unice
-     */
-    protected $unice;
-
-
-    /**
      * Payload constructor.
-     * @param $unice Unice
+     * @param string|array|object $payload
      */
-    public function __construct(Unice $unice)
+    public function __construct($payload = null)
     {
-        $this->unice = $unice;
-        $this->sender = $unice->getUid();
         $this->devices = collect();
         $this->commands = collect();
-        $this->extra = (object)[];
+
+        if (is_null($payload)) {
+            return;
+        }
+
+        if (is_string($payload)) {
+            $payload = json_decode($payload);
+        }
+
+        if (is_array($payload)) {
+            $payload = (object)$payload;
+        }
+
+        //todo
+//        $this->validate($payload);
+
+        $this->devices = collect($payload->devices);
+
     }
 
     /**
@@ -76,6 +78,11 @@ class Payload
     {
         $this->commands->push($command);
         return $this;
+    }
+
+    public function getDevices()
+    {
+        return $this->devices;
     }
 
     /**
@@ -101,26 +108,22 @@ class Payload
         return $this;
     }
 
-    public function getUnice()
-    {
-        return $this->unice;
-    }
-
-    public function getSender()
-    {
-        $this->sender;
-    }
-
-
     /**
      * @return string
      */
     function __toString()
     {
         return json_encode((object)[
-            'sender' => $this->sender,
             'devices' => $this->devices,
             'commands' => $this->commands,
         ]);
+    }
+
+    public function forMessage()
+    {
+        return (object)[
+            'devices' => $this->devices,
+            'commands' => $this->commands,
+        ];
     }
 }

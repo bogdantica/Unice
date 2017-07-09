@@ -3,17 +3,11 @@
         <h5 class="m-b-md">{{ $device->device_display }}</h5>
 
         <h4>
-            <input type="checkbox" class="js-switch" {{ $device->state->state_target_real ? 'checked' : '' }}
+            <input type="checkbox" class="js-switch" {{ $device->state->target ? 'checked' : '' }}
             data-plugin="device-action"
-            data-device="{{$device->id}}"
-                   data-device-type="{{ $device->type->device_type_id }}"
+                   data-device="{{$device->id}}"
             />
         </h4>
-
-        @if($device->state->last_time_target_updated)
-            <small>Since {{ $device->state->last_time_target_updated->diffforhumans() }}</small>
-        @endif
-
     </div>
 </div>
 

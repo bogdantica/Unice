@@ -65,6 +65,7 @@
 {{ Html::script('js/plugins/switchery/switchery.js') }}
 
 {{ Html::script('js/control/deviceAction.js') }}
+{{ Html::script('js/control/dummyUnice.js') }}
 
 
 @yield('scripts')

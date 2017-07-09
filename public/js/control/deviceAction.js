@@ -17,10 +17,16 @@
         plugin.init = function () {
             plugin.settings = $.extend({}, defaults, options);
 
-            plugin.newTarget = $element.val();
             plugin.device = $element.data('device');
 
             $element.on('change', function () {
+
+                if ($element.attr('type') == 'checkbox') {
+                    plugin.target = $element.is(":checked") ? 1 : 0;
+                } else {
+                    plugin.target = $element.val();
+                }
+
                 return updateState();
             });
 
@@ -31,7 +37,7 @@
                 type:'POST',
                 data: {
                     device: plugin.device,
-                    newTarget: plugin.newTarget
+                    target: plugin.target
                 },
                 success: function (response) {
                     showNotifications(response.messages)

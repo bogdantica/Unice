@@ -9,7 +9,8 @@
 namespace App\Control\Unice\SDK\Unice;
 
 
-use Carbon\Carbon;
+use App\Control\Unice\SDK\Message\Payload\Payload;
+use App\Jobs\HandleDeviceJob;
 
 /**
  * Class Unice
@@ -24,7 +25,7 @@ class Unice
 
     /**
      * Unice constructor.
-     * @param Unice $unice
+     * @param \App\Models\Unice\Unice $unice
      */
     public function __construct(\App\Models\Unice\Unice $unice)
     {
@@ -44,16 +45,19 @@ class Unice
             \Cache::forget($cacheKey);
         }
 
-        return \Cache::remember($cacheKey, 10, function () use ($uid) {
-            $uniceModel = \App\Models\Unice\Unice::where('unice_uid', $uid)
-                ->with('type')
-                ->with('devices')
-                ->with('devices.type')
-                ->with('devices.state')
-                ->first();
+        $uniceModel = \App\Models\Unice\Unice::where('unice_uid', $uid)
+            ->with('type')
+            ->with('devices')
+            ->with('devices.type')
+            ->with('devices.state');
 
-            return new Unice($uniceModel);
-        });
+        dump($uid);
+
+        return new Unice($uniceModel->first());
+
+//        return \Cache::remember($cacheKey, 10, function () use ($uniceModel) {
+//            return new Unice($uniceModel->first());
+//        });
     }
 
     public function getType()
@@ -73,10 +77,27 @@ class Unice
         $this->uniceModel->save();
     }
 
-    public function incomingMessage()
+    public function online()
     {
-        //todo add cache remove.make a notification. remove cache
-        $this->uniceModel->last_reported = Carbon::now();
+        $this->uniceModel->online = true;
         $this->uniceModel->save();
+        return $this;
+    }
+
+    /**
+     * @param Payload $payload
+     * @return $this
+     */
+    public function handlePayload(Payload $payload)
+    {
+        $payload->getDevices()->each(function ($device) {
+            dispatch(new HandleDeviceJob($device));
+        });
+
+        //todo handle this payload...
+        //make a notification
+
+        return $this;
+
     }
 }

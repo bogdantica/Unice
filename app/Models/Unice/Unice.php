@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Unice extends Model 
 {
 
+    const BASE_UID = 'base_1234';
+
     protected $table = 'unices';
     public $timestamps = true;
 

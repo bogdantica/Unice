@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Unice;
 
+use App\Control\Unice\SDK\Device\Device;
 use App\Http\Controllers\Controller;
-use App\Models\Unice\Device;
 use App\Models\Unice\Unice;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -101,23 +101,11 @@ class UniceController extends Controller
     {
         $this->validate($request, [
             'device' => 'required|exists:devices,id',
-            'newTarget' => 'required'
+            'target' => 'required|numeric'
         ]);
 
-        $device = Device::with(['state', 'type'])->where('id', $request->device)->first();
+        Device::getById((int)$request->device)->updateTarget($request->target);
 
-
-        //todo make a method or class in order to handle new state based on device type
-        // todo and send new state_target to device via communication class
-
-//        if ($request->newTarget != $device->state->state_target) {
-//        }
-
-        $device->state->state_target = $request->newTarget;
-        $device->state->state_target_real = $request->newTarget; //todo remove
-        $device->state->save();
-
-        //todo
         return new JsonResponse([
             'messages' =>
                 [

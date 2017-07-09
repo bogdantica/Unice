@@ -27,9 +27,9 @@ function clientTes()
 
     $payload = new \App\Control\Unice\SDK\Message\Payload\Payload($unice);
 
-    $message = new \App\Control\Unice\SDK\Message\Message([
+    $message = new \App\Control\Unice\SDK\Message\UniceMessage([
         'receiver' => 'rin_unice_1234',
-        'code' => \App\Control\Unice\SDK\Message\Message::BASE_TO_UNICE,
+        'code' => \App\Control\Unice\SDK\Message\UniceMessage::BASE_TO_UNICE,
         'payload' => $payload
     ]);
 

@@ -9,7 +9,6 @@ namespace App\Control\Unice\SDK\Message;
  * Time: 17:53
  */
 use App\Control\Unice\SDK\Message\Payload\Payload;
-use App\Control\Unice\SDK\Unice\Unice;
 
 /**
  * Class MessageAbstract
@@ -22,10 +21,10 @@ abstract class MessageAbstract
      * todo implement a validation
      */
     const MESSAGE_STRUCTURE = [
-        'code' => 'required',
-        'receiver' => 'string',
-        'sender' => 'string|uid',
-        'payload' => 'object|required'
+        'type' => 'required',
+        'sender' => 'required|string|exists:unices,unice_uid',
+        'receiver' => 'nullable|string|exists:unices,unice_uid',
+        'payload' => ''
     ];
 
     /**
@@ -50,25 +49,38 @@ abstract class MessageAbstract
     protected $payload;
 
 
+    /**
+     * @return string
+     */
     public function getSender()
     {
         return $this->sender;
     }
 
+    /**
+     * @return string
+     */
     public function getReceiver()
     {
         return $this->receiver;
     }
 
+    /**
+     * @return string
+     */
     public function getType()
     {
         return $this->type;
     }
 
+    /**
+     * @return Payload
+     */
     public function getPayload()
     {
         return $this->payload;
     }
+
 
     /**
      * MessageAbstract constructor.
@@ -77,14 +89,41 @@ abstract class MessageAbstract
     function __construct($message)
     {
         if (is_string($message)) {
-            $message = (object)json_decode($message);
+            $message = json_decode($message);
         }
 
-        $this->type = $message->type;
-        $this->receiver = $message->receiver;
-        $this->sender = $message->sender;
-        $this->payload = new Payload($this->payload);
+        if (is_array($message)) {
+            $message = (object)$message;
+        }
 
+        $this->validateMessage($message);
+
+        $this->type = $message->type;
+        $this->sender = $message->sender;
+        $this->receiver = $message->receiver ?? null;
+        //todo check this here :D
+
+        if (isset($message->payload)) {
+            $this->payload = new Payload($message->payload);
+        }
+    }
+
+
+    /**
+     * @param $message
+     * @return bool
+     * @throws \Exception
+     */
+    protected function validateMessage($message)
+    {
+        $validation = \Validator::make((array)$message, static::MESSAGE_STRUCTURE);
+
+        if ($validation->fails()) {
+            dump($validation->errors()->toArray());
+            throw new \Exception('Invalid Message');
+        }
+
+        return true;
     }
 
     /**
@@ -105,7 +144,7 @@ abstract class MessageAbstract
             'type' => $this->type,
             'sender' => $this->sender,
             'receiver' => $this->receiver,
-            'payload' => $this->payload
+            'payload' => $this->payload ? $this->payload->forMessage() : null
         ]);
     }
 }

@@ -9,11 +9,9 @@
 namespace App\Control\WebSocket\Client;
 
 
-use App\Control\Unice\SDK\Message\Message;
 use App\Control\Unice\SDK\Message\MessageAbstract;
-use App\Control\Unice\SDK\Message\Payload\Payload;
-use App\Control\Unice\SDK\Unice\Unice;
-
+use App\Control\Unice\SDK\Message\UniceMessage;
+use Hoa\Websocket\Client;
 use Tik\WebSocket\Client\ClientAbstract;
 
 class UniceBase extends ClientAbstract
@@ -23,7 +21,7 @@ class UniceBase extends ClientAbstract
     {
         $protocol = is_null($protocol) ? config('control.uniceCommunication.connection.protocol', 'ws') : $protocol;
         $host = is_null($host) ? config('control.uniceCommunication.connection.host', '127.0.0.1') : $host;
-        $port = is_null($port) ? config('control.uniceCommunication.connection.port', '98765') : $port;
+        $port = is_null($port) ? config('control.uniceCommunication.connection.port', '9876') : $port;
 
         parent::__construct($protocol, $host, $port);
     }
@@ -34,7 +32,7 @@ class UniceBase extends ClientAbstract
             $this->client->close();
         }
 
-        $this->client = new  \Hoa\Websocket\Client(
+        $this->client = new  Client(
             new \Hoa\Socket\Client($this->getURI())
         );
 
@@ -48,26 +46,21 @@ class UniceBase extends ClientAbstract
     public function send(MessageAbstract $message)
     {
         $this->newConnection();
-        $unice = Unice::getByUid('base_client_12349876');
 
-        $authMessage = new Message([
-            'receiver' => $message->receiver,
-            'code' => Message::UID_CHECK,
-            'sender' => $unice->getUid(), //todo should do this dynamic.
-            'payload' => new Payload($unice)
+        $authMessage = new UniceMessage([
+            'type' => UniceMessage::UID_CHECK,
+            'sender' => \App\Models\Unice\Unice::BASE_UID,
+            'receiver' => $message->getReceiver(),
         ]);
 
-        //send a message in order to auth and join channel.
-        $this->client->send((string)$authMessage);
+        $this->client->send($authMessage->__toString());
 
-        //if we are kicked out, return false.
-        //todo update this in order to be valid.
+        //todo check if is kicked out
         if (!$this->client) {
             return false;
         }
 
-        //let's send message to channel
-        $this->client->send((string)$message);
+        $this->client->send($message->__toString());
 
         $this->client->close();
         return true;

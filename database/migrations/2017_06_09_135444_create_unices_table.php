@@ -10,16 +10,16 @@ class CreateUnicesTable extends Migration
     {
         Schema::create('unices', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamps();
-            $table->softDeletes();
+
             $table->string('unice_name');
             $table->string('unice_display');
             $table->string('unice_uid')->unique();
-            $table->dateTime('last_reported')->nullable();
-            $table->dateTime('last_sync')->nullable();
             $table->boolean('online')->default(false);
 
             $table->integer('unice_type_id')->unsigned()->index();
+
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

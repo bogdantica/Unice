@@ -8,11 +8,9 @@
 
 namespace App\Control\WebSocket\Server;
 
-use App\Control\Unice\SDK\Message\Message;
+use App\Control\Unice\SDK\Message\UniceMessage;
 use Hoa\Event\Bucket;
-use Hoa\Socket\Connection\Connection;
 use Hoa\Websocket\Server;
-use Illuminate\Support\Collection;
 use Tik\WebSocket\Server\WebSocketServerAbstract;
 
 /**
@@ -29,10 +27,6 @@ class ControlWs extends WebSocketServerAbstract
      */
     function __construct($protocol = null, $host = null, $port = null)
     {
-        $protocol = is_null($protocol) ? config('control.uniceCommunication.connection.protocol', 'ws') : $protocol;
-        $host = is_null($host) ? config('control.uniceCommunication.connection.host', '127.0.0.1') : $host;
-        $port = is_null($port) ? config('control.uniceCommunication.connection.port', '98765') : $port;
-
         parent::__construct($protocol, $host, $port);
 
         $this->server = new Server(
@@ -51,7 +45,6 @@ class ControlWs extends WebSocketServerAbstract
      */
     public static function onOpen(Bucket $event)
     {
-
     }
 
     /**
@@ -59,12 +52,18 @@ class ControlWs extends WebSocketServerAbstract
      */
     public static function onClose(Bucket $event)
     {
-        $node = $event->getSource()->getConnection()->getCurrentNode();
+        try {
+            $node = $event->getSource()->getConnection()->getCurrentNode();
 
-        $unice = $node->getUnice();
+            $unice = $node->getUnice();
 
-        if (!is_null($unice)) {
-            $unice->offline();
+            if ($unice) {
+                $unice->offline();
+            }
+            dump('Closed: ', $node->getName());
+
+        } catch (\Exception $e) {
+            dump('Close', $e->getMessage());
         }
     }
 
@@ -73,74 +72,19 @@ class ControlWs extends WebSocketServerAbstract
      */
     public static function onMessage(Bucket $event)
     {
-
-        $source = $event->getSource();
-        $connection = $source->getConnection();
+        $connection = $event->getSource()->getConnection();
         $node = $connection->getCurrentNode();
-        $nodes = (new Collection($connection->getNodes()))->reject(function ($item) use ($node) {
-            return $node == $item; //other nodes...
-        });
-
+        $nodes = collect($connection->getNodes())->reject($node);
         $message = $event->getData()['message'];
 
         try {
 
-            static::parseMessageEvent($source, $node, $nodes, $message);
+            dump($message);
+            $message = new UniceMessage($message,$event->getSource());
+            $message->handle($node, $nodes);
 
-        } catch (\Exception $exception) {
-
-            \Log::error($exception->getMessage());
+        } catch (\Exception $e) {
+            dump('Message:', $e->getMessage());
         }
     }
-
-
-    /**
-     * @param Server $source
-     * @param Connection $connection
-     * @param UniceNode $node
-     * @param Collection $nodes
-     * @param string $message
-     * @return mixed
-     */
-    public static function parseMessageEvent(Server $source, UniceNode $node, Collection $nodes, string $message)
-    {
-        $message = new Message($message);
-
-        if (!Message::validateMessage($message)) {
-            $node->reject($source, 'Invalid Message');
-            return false;
-        }
-
-        switch ($message->code) {
-            case Message::UID_CHECK:
-                return $node->join($source, $message, $nodes);
-                break;
-            case Message::BASE_TO_UNICE:
-                Message::baseToUnice($source, $node, $nodes, $message);
-                break;
-
-            case Message::UNICE_TO_BASE:
-                Message::uniceToApp($source, $node, $nodes, $message);
-                break;
-
-            default:
-                $source->close(
-                    \Hoa\Websocket\Connection::CLOSE_NORMAL,
-                    'Invalid Message Type'
-                );
-        }
-        return false;
-    }
-
-    /**
-     * @param Server $source
-     * @param $message
-     * @param UniceNode|null $node
-     * @return mixed
-     */
-    public static function send(Server $source, Message $message, UniceNode $node = null)
-    {
-        return $source->send($message->__toString(), $node) ?? false;
-    }
-
 }

@@ -9,14 +9,17 @@ class CreateDevicesTable extends Migration {
 	{
 		Schema::create('devices', function(Blueprint $table) {
 			$table->increments('id');
-			$table->timestamps();
-			$table->softDeletes();
-			$table->string('device_name');
-			$table->string('device_display');
-			$table->string('device_uid')->unique();
-			$table->integer('unice_id')->unsigned()->index();
-			$table->integer('device_type_id')->unsigned()->index();
-		});
+
+            $table->integer('unice_id')->unsigned()->index();
+
+            $table->string('device_name');
+            $table->string('device_display');
+            $table->string('device_uid')->unique();
+            $table->integer('device_type_id')->unsigned()->index();
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
 	}
 
 	public function down()

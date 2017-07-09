@@ -9,7 +9,7 @@
 namespace App\Control\WebSocket\Server;
 
 
-use App\Control\Unice\SDK\Message\Message;
+use App\Control\Unice\SDK\Message\UniceMessage;
 use App\Control\Unice\SDK\Unice\Unice;
 use App\Models\Unice\MapUniceType;
 use Hoa\Websocket\Connection;
@@ -39,16 +39,15 @@ class UniceNode extends Node
     protected $uid = false;
 
     /**
-     * @param Server $source
-     * @param Message $message
+     * @param UniceMessage $message
      * @return bool
      */
-    public function join(Server $source, Message $message)
+    public function join(UniceMessage $message)
     {
         $unice = Unice::getByUid($message->getSender(), false);
 
         if (!$unice) {
-            return $this->reject($source);
+            return $this->reject($this->getConnection());
         }
 
         $this->setUnice($unice);
@@ -59,12 +58,17 @@ class UniceNode extends Node
                 break;
             default:
                 $this->joinNode($message->getSender(), $message->getSender());
+                $unice->online();
                 break;
         }
 
         return $this->getUid();
     }
 
+    /**
+     * @param string $name
+     * @param string $senderUid
+     */
     protected function joinNode(string $name, string $senderUid)
     {
         $this->name = 'node-' . $name;
@@ -72,6 +76,10 @@ class UniceNode extends Node
         $this->uid = $senderUid;
     }
 
+    /**
+     * @param Unice $unice
+     * @return $this
+     */
     protected function setUnice(Unice $unice)
     {
         $this->unice = $unice;
@@ -79,7 +87,13 @@ class UniceNode extends Node
         return $this;
     }
 
-    public function reject(Server $source, string $message = 'Rejected')
+
+    /**
+     * @param Connection|Server $source
+     * @param string $message
+     * @return bool
+     */
+    public function reject($source, string $message = 'Rejected')
     {
         $source->close(
             Connection::CLOSE_NORMAL,
@@ -109,9 +123,9 @@ class UniceNode extends Node
      *  Get Channel Name
      * @return string
      */
-    public function getChannel()
+    public function getName()
     {
-        return $this->channel;
+        return $this->name;
     }
 
     /**

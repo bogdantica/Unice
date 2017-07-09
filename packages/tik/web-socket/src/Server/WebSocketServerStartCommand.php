@@ -2,6 +2,7 @@
 
 namespace Tik\WebSocket\Server;
 
+use App\Control\WebSocket\Server\ControlWs;
 use Illuminate\Console\Command;
 
 /**
@@ -15,7 +16,7 @@ class WebSocketServerStartCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'ws:start {class=ControlWs} {--default=true}';
+    protected $signature = 'ws:start {class=-} {--default=true}';
 
     /**
      * The console command description.
@@ -48,7 +49,11 @@ class WebSocketServerStartCommand extends Command
     {
         $class = $this->argument('class');
         $default = $this->option('default');
-        $default = ($default == 'false' || $default == '0') ? false: true;
+        $default = ($default == 'false' || $default == '0') ? false : true;
+
+        if ($class == '-') {
+            $class = config('control.uniceCommunication.connection.class', ControlWs::class);
+        }
 
         if (!is_subclass_of($class, WebSocketServerAbstract::class)) {
             throw new \Exception('Class should extend: ' . WebSocketServerAbstract::class);
@@ -56,7 +61,7 @@ class WebSocketServerStartCommand extends Command
 
         $protocol = config('control.uniceCommunication.connection.protocol', 'ws');
         $host = config('control.uniceCommunication.connection.host', '127.0.0.1');
-        $port = config('control.uniceCommunication.connection.port', '9876');
+        $port = config('control.uniceCommunication.connection.port', '98765');
 
         if (!$default) {
             $protocol = $this->ask('Protocol:', $protocol);
