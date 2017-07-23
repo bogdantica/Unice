@@ -13,6 +13,10 @@
 Auth::routes();
 
 
+Route::get('/info',function (){
+    phpinfo();
+});
+
 Route::group([], function () {
 
     Route::get('/unices', [
@@ -39,6 +43,8 @@ Route::get('/dummyUnice', function () {
 Route::get('/', function () {
     return view('welcome');
 });
+
+
 
 Route::get('/test', function () {
 
