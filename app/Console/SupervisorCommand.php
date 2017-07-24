@@ -81,7 +81,7 @@ class SupervisorCommand extends Command
             $output = storage_path('logs/' . $worker->program . '.log');
 
             $fileContent = '' .
-                "[program:'$worker->program']" . "\n" .
+                "[program:$worker->program]" . "\n" .
                 "process_name=%(program_name)s_%(process_num)02d " . "\n" .
                 "command=$command" . "\n" .
                 "autostart=true" . "\n" .
@@ -99,7 +99,7 @@ class SupervisorCommand extends Command
     protected function rebuildFile($fileName, $content)
     {
         $path = "/etc/supervisor/conf.d/$fileName.conf";
-        
+
         $file = fopen($path, 'w+');
         fwrite($file, $content);
         fclose($file);
