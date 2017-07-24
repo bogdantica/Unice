@@ -98,7 +98,7 @@ class SupervisorCommand extends Command
 
     protected function rebuildFile($fileName, $content)
     {
-        $path = "etc/supervisor/conf.d/$fileName.conf";
+        $path = "/etc/supervisor/conf.d/$fileName.conf";
 
         $file = fopen($path, 'w+');
         fwrite($file, $content);
