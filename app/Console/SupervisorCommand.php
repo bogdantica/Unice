@@ -52,7 +52,7 @@ class SupervisorCommand extends Command
     {
         $this->workers = collect([
             (object)[
-                'program' => 'laravel-worker',
+                'program' => 'unice-worker',
                 'threads' => 3,
                 'options' => collect([
                     '--tries' => 1,
