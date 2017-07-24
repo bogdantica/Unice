@@ -95,8 +95,6 @@ class SupervisorCommand extends Command
                 "redirect_stderr=true" . "\n" .
                 "stdout_logfile=$output" . "\n";
 
-            echo $fileContent;
-
             $this->rebuildFile($worker->program, $fileContent);
 
         });
@@ -116,23 +114,17 @@ class SupervisorCommand extends Command
 
     protected function reloadProcesses()
     {
-
-
         system("sudo supervisorctl reread");
         system("sudo supervisorctl update");
-
 
         $this->workers->each(function ($worker) {
             $programName = $worker->program . ':*';
             system("sudo supervisorctl start $programName");
         });
 
-        \Artisan::command('queue:restart', function () {
-            $this->info("Queue restarting");
-        });
+        \Artisan::call('queue:restart');
 
-
-
+        $this->info('Queues restarted.');
 
     }
 
