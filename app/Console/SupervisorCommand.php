@@ -38,7 +38,7 @@ class SupervisorCommand extends Command
     /**
      * @var string
      */
-    protected $user = 'supervisor';
+    protected $user = 'serverpilot';
 
     /**
      * @var Collection
