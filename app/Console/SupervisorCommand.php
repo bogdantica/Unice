@@ -74,7 +74,7 @@ class SupervisorCommand extends Command
         $this->workers->each(function ($worker) {
             $command = $this->php;
             $command .= ' ' . base_path();
-            $command .= 'artisan queue:work';
+            $command .= '/artisan queue:work';
 
             $worker->options->each(function ($value, $option) use (&$command) {
                 $command .= ' ' . $option . '=' . $value;
