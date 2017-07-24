@@ -132,9 +132,7 @@ class SupervisorCommand extends Command
         \Artisan::call('queue:restart');
 
         $this->info('Queues restarted.');
-
     }
-
 
     /**
      * Execute the console command.
@@ -146,6 +144,5 @@ class SupervisorCommand extends Command
         $this->workers()
             ->rebuildFiles()
             ->reloadProcesses();
-
     }
 }

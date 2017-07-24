@@ -9,8 +9,8 @@
 namespace App\Control\Unice\SDK\Device;
 
 
-use App\Control\Unice\SDK\Message\BaseMessage;
 use App\Control\Unice\SDK\Unice\Unice;
+use App\Jobs\UniceMessageJob;
 use App\Models\Unice\DeviceState;
 
 class Device
@@ -68,7 +68,7 @@ class Device
 
         $this->deviceModel->state->save();
 
-        BaseMessage::byDevice($this);
+        dispatch(new UniceMessageJob($this));
 
         return $this;
     }
