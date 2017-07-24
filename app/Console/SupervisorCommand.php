@@ -45,6 +45,8 @@ class SupervisorCommand extends Command
      */
     protected $workers = [];
 
+    STATIC $supervisorConfPath = '/etc/supervisor/conf.d/';
+
     /**
      *
      */
@@ -63,7 +65,7 @@ class SupervisorCommand extends Command
             ]
         ]);
 
-        $this->rebuildFiles();
+        return $this;
     }
 
     /**
@@ -98,11 +100,13 @@ class SupervisorCommand extends Command
             $this->rebuildFile($worker->program, $fileContent);
 
         });
+
+        return $this;
     }
 
     protected function rebuildFile($fileName, $content)
     {
-        $path = "/etc/supervisor/conf.d/$fileName.conf";
+        $path = static::$supervisorConfPath . "$fileName.conf";
 
         $file = fopen($path, 'w+');
         fwrite($file, $content);
@@ -112,6 +116,23 @@ class SupervisorCommand extends Command
 
     protected function reloadProcesses()
     {
+
+
+        system("sudo supervisorctl reread");
+        system("sudo supervisorctl update");
+
+
+        $this->workers->each(function ($worker) {
+            $programName = $worker->program . ':*';
+            system("sudo supervisorctl start $programName");
+        });
+
+        \Artisan::command('queue:restart', function () {
+            $this->info("Queue restarting");
+        });
+
+
+
 
     }
 
@@ -123,8 +144,9 @@ class SupervisorCommand extends Command
      */
     public function handle()
     {
-        $this->workers();
-
+        $this->workers()
+            ->rebuildFiles()
+            ->reloadProcesses();
 
     }
 }
