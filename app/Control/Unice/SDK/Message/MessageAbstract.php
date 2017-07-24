@@ -9,6 +9,7 @@ namespace App\Control\Unice\SDK\Message;
  * Time: 17:53
  */
 use App\Control\Unice\SDK\Message\Payload\Payload;
+use Hoa\Websocket\Server;
 
 /**
  * Class MessageAbstract
@@ -17,6 +18,19 @@ use App\Control\Unice\SDK\Message\Payload\Payload;
 abstract class MessageAbstract
 {
     /**
+     *
+     */
+    const UID_CHECK = 100;
+    /**
+     *
+     */
+    const BASE_TO_UNICE = 200;
+    /**
+     *
+     */
+    const UNICE_TO_BASE = 250;
+
+    /**
      * Message Structure
      * todo implement a validation
      */
@@ -24,8 +38,13 @@ abstract class MessageAbstract
         'type' => 'required',
         'sender' => 'required|string|exists:unices,unice_uid',
         'receiver' => 'nullable|string|exists:unices,unice_uid',
-        'payload' => ''
+        'payload' => 'nullable'
     ];
+
+    /**
+     * @var Server
+     */
+    protected $source;
 
     /**
      * @var string
@@ -85,29 +104,38 @@ abstract class MessageAbstract
     /**
      * MessageAbstract constructor.
      * @param $message
+     * @param Server|null $source
      */
-    function __construct($message)
+    function __construct($message, Server $source = null)
+    {
+        $this->source = $source;
+        $this->parseMessage($message);
+    }
+
+    /**
+     * @param $message
+     */
+    protected function parseMessage($message)
     {
         if (is_string($message)) {
             $message = json_decode($message);
         }
 
+        $this->validateMessage($message);
+
         if (is_array($message)) {
             $message = (object)$message;
         }
 
-        $this->validateMessage($message);
-
         $this->type = $message->type;
         $this->sender = $message->sender;
         $this->receiver = $message->receiver ?? null;
-        //todo check this here :D
 
         if (isset($message->payload)) {
             $this->payload = new Payload($message->payload);
         }
-    }
 
+    }
 
     /**
      * @param $message

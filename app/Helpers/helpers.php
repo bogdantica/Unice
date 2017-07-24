@@ -14,13 +14,12 @@ function isActiveRoute($route)
 
 function clientTes()
 {
-//    echo new \App\Control\WebSocket\Message\Message([
-//        'code' => \App\Control\WebSocket\Message\Message::UID_CHECK,
-//        'sender' => 'rin_unice_1234'
-//    ]);
 
 
     $client = new App\Control\WebSocket\Client\UniceBase();
+
+
+
 
     $unice = \App\Control\Unice\SDK\Unice\Unice::getByUid('rin_unice_1234');
 

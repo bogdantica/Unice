@@ -12,11 +12,6 @@
 */
 Auth::routes();
 
-
-Route::get('/info',function (){
-    phpinfo();
-});
-
 Route::group([], function () {
 
     Route::get('/unices', [
@@ -33,6 +28,7 @@ Route::group([], function () {
         'as' => 'unice.device.update-state',
         'uses' => 'Unice\UniceController@updateState'
     ]);
+
 });
 
 
@@ -47,6 +43,9 @@ Route::get('/', function () {
 
 
 Route::get('/test', function () {
+
+
+
 
 
     $payload = '{"devices":{"room_light_1234":{"uid":"room_light_1234","device_name":"room_light","state":{"state":3,"target":2}}},"commands":[]}';

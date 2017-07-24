@@ -16,5 +16,11 @@ class DeviceStateTableSeeder extends Seeder
             'state' => 0,
             'target' => false,
         ));
+        // Temperature
+        DeviceState::create(array(
+            'device_id' => 2,
+            'state' => 27,
+            'target' => 0,
+        ));
     }
 }

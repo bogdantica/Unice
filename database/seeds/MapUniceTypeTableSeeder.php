@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Seeder;
 use App\Models\Unice\MapUniceType;
+use Illuminate\Database\Seeder;
 
 class MapUniceTypeTableSeeder extends Seeder {
 

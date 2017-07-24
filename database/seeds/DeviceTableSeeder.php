@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Seeder;
 use App\Models\Unice\Device;
+use Illuminate\Database\Seeder;
 
 class DeviceTableSeeder extends Seeder
 {
@@ -18,5 +18,16 @@ class DeviceTableSeeder extends Seeder
             'unice_id' => 2,
             'device_type_id' => \App\Models\Unice\MapDeviceType::DOUBLE_POSITION
         ));
+
+        // Living Temperature
+        Device::create(array(
+            'device_name' => 'living_temperature',
+            'device_display' => 'Living Temperature',
+            'device_uid' => 'living_temperature_1234',
+            'unice_id' => 2,
+            'device_type_id' => \App\Models\Unice\MapDeviceType::SENSOR
+        ));
+
+
     }
 }

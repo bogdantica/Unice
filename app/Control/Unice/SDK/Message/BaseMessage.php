@@ -33,7 +33,6 @@ class BaseMessage extends UniceMessage
             'payload' => $payload
         ]);
 
-
         UniceBase::sendNow($message);
     }
 

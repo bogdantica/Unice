@@ -1,3 +1,7 @@
 .t-a-c {
     text-align: center;
 }
+
+#toast-container > .toast-success:before{
+    content: "";
+}

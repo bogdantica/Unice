@@ -10,8 +10,10 @@ namespace App\Control\WebSocket\Server;
 
 use App\Control\Unice\SDK\Message\UniceMessage;
 use Hoa\Event\Bucket;
+use Hoa\Socket\Server as SocketServer;
 use Hoa\Websocket\Server;
 use Tik\WebSocket\Server\WebSocketServerAbstract;
+
 
 /**
  * Class ControlWs
@@ -30,10 +32,9 @@ class ControlWs extends WebSocketServerAbstract
         parent::__construct($protocol, $host, $port);
 
         $this->server = new Server(
-            new \Hoa\Socket\Server($this->getURI())
+            new SocketServer($this->getURI())
         );
 
-        $this->server->on('open', [$this, 'onOpen']);
         $this->server->on('close', [$this, 'onClose']);
         $this->server->on('message', [$this, 'onMessage']);
 
@@ -43,34 +44,22 @@ class ControlWs extends WebSocketServerAbstract
     /**
      * @param Bucket $event
      */
-    public static function onOpen(Bucket $event)
-    {
-    }
-
-    /**
-     * @param Bucket $event
-     */
-    public static function onClose(Bucket $event)
+    public function onClose(Bucket $event)
     {
         try {
             $node = $event->getSource()->getConnection()->getCurrentNode();
-
             $unice = $node->getUnice();
-
             if ($unice) {
                 $unice->offline();
             }
-            dump('Closed: ', $node->getName());
-
         } catch (\Exception $e) {
-            dump('Close', $e->getMessage());
         }
     }
 
     /**
      * @param Bucket $event
      */
-    public static function onMessage(Bucket $event)
+    public function onMessage(Bucket $event)
     {
         $connection = $event->getSource()->getConnection();
         $node = $connection->getCurrentNode();
@@ -79,7 +68,6 @@ class ControlWs extends WebSocketServerAbstract
 
         try {
 
-            dump($message);
             $message = new UniceMessage($message,$event->getSource());
             $message->handle($node, $nodes);
 

@@ -12,6 +12,7 @@ class MapDeviceType extends Model
 
     const IMPULSE = 20;
 
+    const SENSOR = 30;
 
     protected $table = 'map_device_types';
     public $timestamps = true;

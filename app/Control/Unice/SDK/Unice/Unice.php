@@ -41,42 +41,54 @@ class Unice
     {
         $cacheKey = 'unice_model_uid_' . $uid;
 
-        if (!$cache) {
-            \Cache::forget($cacheKey);
-        }
-
         $uniceModel = \App\Models\Unice\Unice::where('unice_uid', $uid)
             ->with('type')
-            ->with('devices')
-            ->with('devices.type')
-            ->with('devices.state');
+//            ->with('devices')
+//            ->with('devices.type')
+//            ->with('devices.state')
+        ;
 
-        dump($uid);
+        if (!$cache) {
+            return new Unice($uniceModel->first());
+        }
 
-        return new Unice($uniceModel->first());
-
-//        return \Cache::remember($cacheKey, 10, function () use ($uniceModel) {
-//            return new Unice($uniceModel->first());
-//        });
+        return \Cache::remember($cacheKey, 10, function () use ($uniceModel) {
+            return new Unice($uniceModel->first());
+        });
     }
 
+    /**
+     * @return int
+     */
     public function getType()
     {
         return $this->uniceModel->unice_type_id;
     }
 
+    /**
+     * @return string
+     */
     public function getUid()
     {
         return $this->uniceModel->unice_uid;
     }
 
+
+    /**
+     * @return $this
+     */
     public function offline()
     {
         //todo add cache remove.make a notification. remove cache
         $this->uniceModel->online = false;
         $this->uniceModel->save();
+
+        return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function online()
     {
         $this->uniceModel->online = true;

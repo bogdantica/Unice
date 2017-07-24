@@ -47,7 +47,7 @@ class UniceNode extends Node
         $unice = Unice::getByUid($message->getSender(), false);
 
         if (!$unice) {
-            return $this->reject($this->getConnection());
+            return $this->reject();
         }
 
         $this->setUnice($unice);
@@ -71,7 +71,7 @@ class UniceNode extends Node
      */
     protected function joinNode(string $name, string $senderUid)
     {
-        $this->name = 'node-' . $name;
+        $this->name = 'uniceDevice:' . $name;
 
         $this->uid = $senderUid;
     }
@@ -87,14 +87,17 @@ class UniceNode extends Node
         return $this;
     }
 
-
     /**
      * @param Connection|Server $source
      * @param string $message
      * @return bool
      */
-    public function reject($source, string $message = 'Rejected')
+    public function reject($source = null, string $message = 'Rejected')
     {
+        if (is_null($source)) {
+            $source = $this->getConnection();
+        }
+
         $source->close(
             Connection::CLOSE_NORMAL,
             $message
@@ -129,7 +132,7 @@ class UniceNode extends Node
     }
 
     /**
-     * @return bool
+     * @return int
      */
     public function getUniceType()
     {

@@ -10,12 +10,6 @@ use Illuminate\Http\Request;
 
 class UniceController extends Controller
 {
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
     public function all()
     {
         $unices = Unice::with('type')
@@ -23,26 +17,6 @@ class UniceController extends Controller
             ->get();
 
         return view('unices.all.all', compact('unices'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return Response
-     */
-    public function store()
-    {
-
     }
 
     /**
@@ -63,40 +37,6 @@ class UniceController extends Controller
         return view('unices.unice.unice', compact('unice'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return Response
-     */
-    public function edit($id)
-    {
-
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int $id
-     * @return Response
-     */
-    public function update($id)
-    {
-
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return Response
-     */
-    public function destroy($id)
-    {
-
-    }
-
-
     public function updateState(Request $request)
     {
         $this->validate($request, [
@@ -104,18 +44,16 @@ class UniceController extends Controller
             'target' => 'required|numeric'
         ]);
 
-        Device::getById((int)$request->device)->updateTarget($request->target);
+        Device::getById($request->device)
+            ->updateTarget($request->target);
 
         return new JsonResponse([
             'messages' =>
                 [
                     'success' => [
-                        'Changes should be visible in short time.'
+                        'Device Updated.'
                     ]
-
                 ]
         ]);
     }
 }
-
-?>

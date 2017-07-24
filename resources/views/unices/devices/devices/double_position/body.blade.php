@@ -12,5 +12,5 @@
 </div>
 
 @push('extra')
-@includeIf('unices.devices.devices.'.$device->type->type_name.'.actions')
+    @includeIf('unices.devices.devices.'.$device->type->type_name.'.actions')
 @endpush
