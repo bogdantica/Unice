@@ -52,7 +52,7 @@ class SupervisorCommand extends Command
     {
         $this->workers = collect([
             (object)[
-                'program' => 'default-worker',
+                'program' => 'laravel-worker',
                 'threads' => 3,
                 'options' => collect([
                     '--tries' => 1,
@@ -72,7 +72,9 @@ class SupervisorCommand extends Command
     protected function rebuildFiles()
     {
         $this->workers->each(function ($worker) {
-            $command = $this->php . ' artisan queue:work';
+            $command = $this->php;
+            $command .= ' ' . base_path();
+            $command .= 'artisan queue:work';
 
             $worker->options->each(function ($value, $option) use (&$command) {
                 $command .= ' ' . $option . '=' . $value;
@@ -90,6 +92,8 @@ class SupervisorCommand extends Command
                 "numprocs=$worker->threads" . "\n" .
                 "redirect_stderr=true" . "\n" .
                 "stdout_logfile=$output" . "\n";
+
+            echo $fileContent;
 
             $this->rebuildFile($worker->program, $fileContent);
 
