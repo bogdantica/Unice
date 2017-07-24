@@ -57,8 +57,8 @@ class SupervisorCommand extends Command
                 'program' => 'unice-worker',
                 'threads' => 3,
                 'options' => collect([
+                    '--daemon' => '',
                     '--tries' => 1,
-                    '--daemon' => true,
                     '--sleep' => 5,
                     '--timeout' => 60
                 ])
@@ -79,7 +79,12 @@ class SupervisorCommand extends Command
             $command .= '/artisan queue:work';
 
             $worker->options->each(function ($value, $option) use (&$command) {
-                $command .= ' ' . $option . '=' . $value;
+                $command .= ' ' . $option;
+
+                if ($value != '') {
+                    $command .= '=' . $value;
+                }
+
             });
 
             $output = storage_path('logs/' . $worker->program . '.log');
@@ -94,6 +99,8 @@ class SupervisorCommand extends Command
                 "numprocs=$worker->threads" . "\n" .
                 "redirect_stderr=true" . "\n" .
                 "stdout_logfile=$output" . "\n";
+
+            echo $fileContent;
 
             $this->rebuildFile($worker->program, $fileContent);
 
