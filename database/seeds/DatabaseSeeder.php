@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,20 +12,17 @@ class DatabaseSeeder extends Seeder
 
         // $this->call(UsersTableSeeder::class);
 
-        $this->call('MapUniceTypeTableSeeder');
+        $this->call(MapUniceTypeTableSeeder::class);
         $this->command->info('MapUniceType table seeded!');
 
-        $this->call('MapDeviceTypeTableSeeder');
+        $this->call(MapDeviceTypeTableSeeder::class);
         $this->command->info('MapDeviceType table seeded!');
 
-        $this->call('UniceTableSeeder');
+        $this->call(BaseUniceSeeder::class);
         $this->command->info('Unice table seeded!');
 
 
-        $this->call('DeviceTableSeeder');
+        $this->call(RinUniceSeeder::class);
         $this->command->info('Device table seeded!');
-
-        $this->call('DeviceStateTableSeeder');
-        $this->command->info('DeviceState table seeded!');
     }
 }

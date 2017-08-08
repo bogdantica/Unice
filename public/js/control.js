@@ -15,7 +15,7 @@ $(document).ready(function () {
     });
 
 
-    $('[data-plugin="device-action"]').deviceAction();
+    $('[data-device]').deviceState();
 });
 
 

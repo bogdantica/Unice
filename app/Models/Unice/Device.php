@@ -28,7 +28,12 @@ class Device extends Model
 
     public function state()
     {
-        return $this->hasOne(DeviceState::class, 'device_id', 'id');
+        return $this->hasOne(DeviceState::class, 'device_id', 'id')->orderBy('updated_at', 'DESC')->orderBy('created_at','DESC');
+    }
+
+    public function stateHistory()
+    {
+        return $this->hasMany(DeviceState::class, 'device_id', 'id')->orderBy('updated_at', 'DESC')->orderBy('created_at','DESC')->limit(10);
     }
 
 }

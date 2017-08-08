@@ -11,6 +11,8 @@ class MapUniceType extends Model
 
     const UNICE_DEVICE_1000 = 1000;
     const UNICE_DEVICE_2000 = 2000;
+    const UNICE_DEVICE_3000 = 3000;
+
     
 
     protected $table = 'map_unice_types';

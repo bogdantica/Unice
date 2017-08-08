@@ -3,11 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ControTik @yield('title') </title>
+    <title>ControlTik @yield('title') </title>
     {{ Html::style('/css/vendor.css') }}
     {{ Html::style('/css/app.css') }}
     {{ Html::style('/css/plugins/switchery/switchery.css') }}
     {{ Html::style('/css/plugins/toastr/toastr.min.css') }}
+    {{ Html::style('/css/plugins/toastr/toastr.min.css') }}
+    {{ Html::style('/css/plugins/nouslider/jquery.nouislider.css') }}
 
     {{ Html::style('/css/control.css') }}
     <script>
@@ -60,18 +62,17 @@
     });
 </script>
 
-{{ Html::script('js/control.js') }}
-{{ Html::script('js/plugins/toastr/toastr.min.js') }}
-{{ Html::script('js/plugins/switchery/switchery.js') }}
+{{ Html::script('/js/control.js') }}
+{{ Html::script('/js/plugins/toastr/toastr.min.js') }}
+{{ Html::script('/js/plugins/switchery/switchery.js') }}
+{{ Html::script('/js/plugins/jsKnob/jquery.knob.js') }}
+{{ Html::script('/js/plugins/nouslider/jquery.nouislider.min.js') }}
+{{ Html::script('/js/plugins/sparkline/jquery.sparkline.min.js') }}
 
-{{ Html::script('js/control/deviceAction.js') }}
-{{ Html::script('js/control/dummyUnice.js') }}
+{{ Html::script('js/control/deviceState.js') }}
 
+@stack('scripts')
 
-@yield('scripts')
-
-
-@show
 
 </body>
 </html>

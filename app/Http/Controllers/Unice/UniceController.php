@@ -31,7 +31,8 @@ class UniceController extends Controller
             'type',
             'devices',
             'devices.type',
-            'devices.state'
+            'devices.state',
+            'devices.stateHistory'
         ]);
 
         return view('unices.unice.unice', compact('unice'));

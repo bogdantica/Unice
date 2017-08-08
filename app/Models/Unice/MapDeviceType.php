@@ -8,11 +8,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class MapDeviceType extends Model 
 {
 
-    const DOUBLE_POSITION = 10;
+    const DOUBLE = 10;
 
-    const IMPULSE = 20;
+    const TRIPLE = 20;
 
-    const SENSOR = 30;
+    const QUADRUPLE = 30;
+
+    const IMPULSE = 40;
+
+    const PERCENTAGE = 50;
+
+    const SENSOR = 60;
+
+
 
     protected $table = 'map_device_types';
     public $timestamps = true;
