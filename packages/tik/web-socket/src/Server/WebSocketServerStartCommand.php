@@ -69,6 +69,7 @@ class WebSocketServerStartCommand extends Command
             $port = $this->ask('Port:', $port);
         }
 
+
         $this->serverInstance = new $class($protocol, $host, $port);
 
         $this->alert('WebSockets Server Started on: ' . $this->serverInstance->getURI());

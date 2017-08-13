@@ -35,10 +35,16 @@ class ControlWs extends WebSocketServerAbstract
             new SocketServer($this->getURI())
         );
 
+        $this->server->on('open', [$this, 'onOpen']);
         $this->server->on('close', [$this, 'onClose']);
         $this->server->on('message', [$this, 'onMessage']);
 
         $this->server->getConnection()->setNodeName(UniceNode::class);
+    }
+
+    public function onOpen(Bucket $event)
+    {
+        dump('connection');
     }
 
     /**
