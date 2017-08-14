@@ -9,6 +9,7 @@
 namespace App\Control\WebSocket\Server;
 
 use App\Control\Unice\SDK\Message\UniceMessage;
+use Carbon\Carbon;
 use Hoa\Event\Bucket;
 use Hoa\Socket\Server as SocketServer;
 use Hoa\Websocket\Server;
@@ -44,7 +45,7 @@ class ControlWs extends WebSocketServerAbstract
 
     public function onOpen(Bucket $event)
     {
-        dump('connection');
+        echo "\nConnected at: " . Carbon::now();
     }
 
     /**
@@ -52,6 +53,9 @@ class ControlWs extends WebSocketServerAbstract
      */
     public function onClose(Bucket $event)
     {
+        echo "\nDisconnected at: " . Carbon::now();
+
+
         try {
             $node = $event->getSource()->getConnection()->getCurrentNode();
             $unice = $node->getUnice();
