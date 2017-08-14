@@ -1,7 +1,6 @@
 <div class="ibox t-a-c">
     <div class="ibox-content">
         <h5 class="m-b-md">{{ $device->device_display }}</h5>
-
         <h4>
 
             <button type="button" data-device-button="{{$device->id}}" data-state="0"

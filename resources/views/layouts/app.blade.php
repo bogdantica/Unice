@@ -62,10 +62,10 @@
         }
     });
 
-    var source = new EventSource("/event");
-    source.onmessage = function (event) {
-        console.log(event);
-    };
+//    var source = new EventSource("/event");
+//    source.onmessage = function (event) {
+//        console.log(event);
+//    };
 
 </script>
 

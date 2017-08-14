@@ -49,7 +49,6 @@
 
                     plugin.sparkline($element.parent().find('[device-state-history="' + plugin.device + '"]'));
 
-
                     var timeout;
                     $element.knob({
                         min: 0,
@@ -65,14 +64,10 @@
                             return value + '%';
                         },
                         release: function () {
-
                             clearInterval(timeout);
-
                             timeout = setTimeout(function () {
                                 plugin.updateState();
-
                             }, 250);
-
                         }
                     });
 
@@ -115,8 +110,6 @@
         };
 
         plugin.sparkline = function ($spark) {
-
-            console.log($spark);
 
             if (typeof $spark == 'undefined') {
                 $element.sparkline('html', {

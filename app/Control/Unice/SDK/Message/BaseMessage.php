@@ -26,6 +26,7 @@ class BaseMessage extends UniceMessage
 
         $payload->addDevice($device);
 
+
         $message = new UniceMessage([
             'type' => UniceMessage::BASE_TO_UNICE,
             'sender' => Unice::BASE_UID,

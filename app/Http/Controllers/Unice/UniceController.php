@@ -12,8 +12,8 @@ class UniceController extends Controller
 {
     public function all()
     {
-        $unices = Unice::with('type')
-            ->withCount('devices')
+        $unices = Unice::withCount('devices')
+            ->whereIsBase(false)
             ->get();
 
         return view('unices.all.all', compact('unices'));
@@ -63,7 +63,6 @@ class UniceController extends Controller
     public function unice(Unice $unice)
     {
         $unice->load([
-            'type',
             'devices',
             'devices.type',
             'devices.state',
@@ -80,16 +79,30 @@ class UniceController extends Controller
             'target' => 'required|numeric'
         ]);
 
-        Device::getById($request->device)
-            ->updateTarget($request->target);
+        try {
+            Device::getById($request->device)
+                ->updateTarget($request->target);
 
+
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'messages' =>
+                    [
+                        'error' => [
+                            'There has an error.'
+                        ]
+                    ]
+            ]);
+        }
         return new JsonResponse([
             'messages' =>
                 [
                     'success' => [
-                        'Device Updated.'
+                        'Device updated.'
                     ]
                 ]
         ]);
+
+
     }
 }

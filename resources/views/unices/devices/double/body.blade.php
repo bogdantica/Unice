@@ -1,9 +1,5 @@
 <div class="ibox float-e-margins">
-    <div class="ibox-title">
-        <span class="label label-{{ $device->state->state != $device->state->target ? 'warning' : 'primary' }} pull-right">{{ $device->state->state }}
-            %</span>
-        <h5>{{ $device->device_display }}</h5>
-    </div>
+    @include('unices.devices.elements.header')
     <div class="ibox-content t-a-c">
 
         <div class="btn-group">
@@ -15,14 +11,7 @@
 
         </div>
 
-        <input type="hidden"
-               value="{{ $device->state->state }}"
-               data-device="{{$device->id}}"
-               data-device-type="{{ $device->type->type_name }}"
-        />
-
-        <div device-state-history="{{$device->id}}" class="m-t-md"
-             values="{{ $device->stateHistory->pluck('state')->implode(',') }}"></div>
+        @include('unices.devices.elements.footer')
 
     </div>
 </div>

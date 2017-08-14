@@ -36,8 +36,8 @@ abstract class MessageAbstract
      */
     const MESSAGE_STRUCTURE = [
         'type' => 'required',
-        'sender' => 'required|string|exists:unices,unice_uid',
-        'receiver' => 'nullable|string|exists:unices,unice_uid',
+        'sender' => 'required|string|exists:unices,uid',
+        'receiver' => 'nullable|string|exists:unices,uid',
         'payload' => 'nullable'
     ];
 
@@ -120,6 +120,7 @@ abstract class MessageAbstract
         if (is_string($message)) {
             $message = json_decode($message);
         }
+
 
         $this->validateMessage($message);
 

@@ -10,7 +10,7 @@ class MapDeviceTypeTableSeeder extends Seeder {
         $devices = collect([
             [
                 'device_type' => MapDeviceType::DOUBLE,
-                'name' => 'Double Position'
+                'name' => 'Double'
             ],
             [
                 'device_type' => MapDeviceType::TRIPLE,
@@ -22,7 +22,7 @@ class MapDeviceTypeTableSeeder extends Seeder {
             ],
             [
                 'device_type' => MapDeviceType::PERCENTAGE,
-                'name' => 'Pencentage'
+                'name' => 'Percentage'
             ],
             [
                 'device_type' => MapDeviceType::SENSOR,

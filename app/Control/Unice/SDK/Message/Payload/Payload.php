@@ -104,7 +104,7 @@ class Payload
      */
     public function addDevice(Device $device)
     {
-        $this->devices->put($device->getUid(), $device->asPayload());
+        $this->devices->push($device->asPayload());
         return $this;
     }
 

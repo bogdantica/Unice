@@ -58,19 +58,11 @@ class Unice
     }
 
     /**
-     * @return int
-     */
-    public function getType()
-    {
-        return $this->uniceModel->unice_type_id;
-    }
-
-    /**
      * @return string
      */
     public function getUid()
     {
-        return $this->uniceModel->unice_uid;
+        return $this->uniceModel->uid;
     }
 
 
