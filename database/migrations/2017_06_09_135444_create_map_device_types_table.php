@@ -9,10 +9,8 @@ class CreateMapDeviceTypesTable extends Migration {
 	{
 		Schema::create('map_device_types', function(Blueprint $table) {
 			$table->increments('id');
-
-            $table->integer('device_type_id')->unique()->unsigned();
-            $table->string('type_name')->unique();
-            $table->string('type_display');
+            $table->integer('device_type')->unique()->unsigned();
+            $table->string('name');
 
             $table->softDeletes();
             $table->timestamps();
@@ -21,6 +19,6 @@ class CreateMapDeviceTypesTable extends Migration {
 
 	public function down()
 	{
-		Schema::drop('map_device_types');
+        Schema::dropIfExists('map_device_types');
 	}
 }

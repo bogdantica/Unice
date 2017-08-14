@@ -9,14 +9,17 @@ class CreateUnicesTable extends Migration
     public function up()
     {
         Schema::create('unices', function (Blueprint $table) {
+
             $table->increments('id');
+            $table->string('name');
 
-            $table->string('unice_name');
-            $table->string('unice_display');
-            $table->string('unice_uid')->unique();
+            $table->string('uid')->unique();
+
             $table->boolean('online')->default(false);
+            $table->string('connection_uid')->nullable();
 
-            $table->integer('unice_type_id')->unsigned()->index();
+            $table->boolean('is_base')->default(false);
+
 
             $table->timestamps();
             $table->softDeletes();

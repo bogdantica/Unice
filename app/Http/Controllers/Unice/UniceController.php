@@ -19,6 +19,41 @@ class UniceController extends Controller
         return view('unices.all.all', compact('unices'));
     }
 
+    public function byUid($uid)
+    {
+        $unice = \App\Models\Unice\Unice::where('uid', $uid)
+            ->select('id', 'name', 'uid')
+            ->with(
+                [
+                    'devices' => function ($query) {
+                        $query->select('id', 'name', 'device_type', 'unice_id');
+                    },
+                    'devices.type' => function ($query) {
+                        $query->select('name', 'device_type');
+                    },
+                    'devices.state' => function ($query) {
+                        $query->select('device_id', 'state', 'target');
+                    }
+                ])
+            ->first();
+
+        if (!$unice) {
+            return new JsonResponse(null, 404);
+        }
+
+        unset($unice['id']);
+
+        $unice->devices->each(function (\App\Models\Unice\Device $device, $key) use ($unice) {
+            unset($unice->devices[$key]['id']);
+            unset($unice->devices[$key]['unice_id']);
+
+            unset($device["state"]['device_id']);
+
+        });
+
+        return new JsonResponse($unice->toArray());
+    }
+
     /**
      * Display the specified resource.
      *

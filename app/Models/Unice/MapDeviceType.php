@@ -28,10 +28,10 @@ class MapDeviceType extends Model
     use SoftDeletes;
 
     protected $dates = ['deleted_at'];
-    protected $fillable = array('device_type_id', 'type_name', 'type_display');
+    protected $fillable = array('device_type', 'name');
 
     public function devices()
     {
-        return $this->hasMany('App\Models\Unice\Device', 'device_type_id', 'device_type_id');
+        return $this->hasMany('App\Models\Unice\Device', 'device_type', 'device_type');
     }
 }

@@ -14,7 +14,7 @@ class Device extends Model
     use SoftDeletes;
 
     protected $dates = ['deleted_at'];
-    protected $fillable = array('device_name', 'device_uid', 'unice_id', 'device_type_id');
+    protected $fillable = array('name', 'uid', 'unice_id', 'device_type');
 
     public function unice()
     {
@@ -23,7 +23,7 @@ class Device extends Model
 
     public function type()
     {
-        return $this->belongsTo(MapDeviceType::class, 'device_type_id', 'device_type_id');
+        return $this->belongsTo(MapDeviceType::class, 'device_type', 'device_type');
     }
 
     public function state()

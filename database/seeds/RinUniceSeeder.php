@@ -12,20 +12,16 @@ class RinUniceSeeder extends Seeder
     public function run()
     {
         $unice = \App\Models\Unice\Unice::create(array(
-            'unice_name' => 'rin_unice',
-            'unice_display' => 'Rin Unice',
-            'unice_uid' => 'rin_unice_1234',
+            'name' => 'Rin Unice',
+            'uid' => 'rin_unice_1234',
             'online' => false,
-            'unice_type_id' => \App\Models\Unice\MapUniceType::UNICE_DEVICE_1000,
         ));
 
 
         $light = \App\Models\Unice\Device::create(array(
-            'device_name' => 'bedroom_light',
-            'device_display' => 'Bedroom Light',
-            'device_uid' => 'bedroom_light' . uniqid(),
+            'name' => 'Bedroom Light',
             'unice_id' => $unice->id,
-            'device_type_id' => \App\Models\Unice\MapDeviceType::DOUBLE
+            'device_type' => \App\Models\Unice\MapDeviceType::DOUBLE
         ));
 
         \App\Models\Unice\DeviceState::create(array(
@@ -34,14 +30,11 @@ class RinUniceSeeder extends Seeder
             'target' => 0,
         ));
 
-
         // Living Temperature
         $hvac = \App\Models\Unice\Device::create(array(
-            'device_name' => 'bedroom_hvac',
-            'device_display' => 'Heating HVAC',
-            'device_uid' => 'bedroom_hvac' . uniqid(),
+            'name' => 'Heating HVAC',
             'unice_id' => $unice->id,
-            'device_type_id' => \App\Models\Unice\MapDeviceType::TRIPLE
+            'device_type' => \App\Models\Unice\MapDeviceType::TRIPLE
         ));
 
         \App\Models\Unice\DeviceState::create(array(
@@ -52,11 +45,9 @@ class RinUniceSeeder extends Seeder
 
 
         $livingLight = \App\Models\Unice\Device::create(array(
-            'device_name' => 'living_light',
-            'device_display' => 'Living Light',
-            'device_uid' => 'Living' . uniqid(),
+            'name' => 'living_light',
             'unice_id' => $unice->id,
-            'device_type_id' => \App\Models\Unice\MapDeviceType::PERCENTAGE
+            'device_type' => \App\Models\Unice\MapDeviceType::PERCENTAGE
         ));
 
         \App\Models\Unice\DeviceState::create(array(
@@ -67,11 +58,9 @@ class RinUniceSeeder extends Seeder
 
 
         $temp = \App\Models\Unice\Device::create(array(
-            'device_name' => 'temperature',
-            'device_display' => 'Temperature',
-            'device_uid' => 'Temperature' . uniqid(),
+            'name' => 'Temperature',
             'unice_id' => $unice->id,
-            'device_type_id' => \App\Models\Unice\MapDeviceType::SENSOR
+            'device_type' => \App\Models\Unice\MapDeviceType::SENSOR
         ));
 
         \App\Models\Unice\DeviceState::create(array(
@@ -79,7 +68,5 @@ class RinUniceSeeder extends Seeder
             'state' => 0,
             'target' => 0,
         ));
-
-        
     }
 }

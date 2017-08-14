@@ -8,6 +8,8 @@ class CreateMapUniceTypesTable extends Migration
 
     public function up()
     {
+        return;
+        
         Schema::create('map_unice_types', function (Blueprint $table) {
             $table->increments('id');
 
@@ -22,6 +24,6 @@ class CreateMapUniceTypesTable extends Migration
 
     public function down()
     {
-        Schema::drop('map_unice_types');
+        Schema::dropIfExists('map_unice_types');
     }
 }

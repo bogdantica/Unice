@@ -7,29 +7,30 @@ class MapUniceTypeTableSeeder extends Seeder {
 
 	public function run()
 	{
-        MapUniceType::create([
-            'unice_type_id' => MapUniceType::UNICE_BASE,
-            'type_name' => 'unice_base',
-            'type_display' => 'Unice Base'
+
+        $types = collect([
+            [
+                'device_type' => MapUniceType::UNICE_BASE,
+                'name' => 'Unice Base'
+            ],
+            [
+                'device_type' => MapUniceType::UNICE_DEVICE_1000,
+                'name' => 'Unice Device 1000'
+            ],
+            [
+                'device_type' => MapUniceType::UNICE_DEVICE_2000,
+                'name' => 'Unice Device 2000'
+            ],
+            [
+                'device_type' => MapUniceType::UNICE_DEVICE_3000,
+                'name' => 'Unice Device 3000'
+            ]
         ]);
 
-        MapUniceType::create([
-				'unice_type_id' => MapUniceType::UNICE_DEVICE_1000,
-				'type_name' => 'unice_device_1000',
-				'type_display' => 'Unice Device 1000'
-        ]);
+        $types->each(function ($type) {
+            MapUniceType::create($type);
+        });
 
-        MapUniceType::create([
-				'unice_type_id' => MapUniceType::UNICE_DEVICE_2000,
-				'type_name' => 'unice_device_2000',
-				'type_display' => 'Unice Device 2000'
-        ]);
-
-        MapUniceType::create([
-            'unice_type_id' => MapUniceType::UNICE_DEVICE_3000,
-            'type_name' => 'unice_device_3000',
-            'type_display' => 'Unice Device 3000'
-        ]);
 
 		
 		

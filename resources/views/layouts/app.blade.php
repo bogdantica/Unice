@@ -54,12 +54,19 @@
 
 
 {{ Html::script('js/app.js') }}
+
 <script>
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': "{!! csrf_token() !!}"
         }
     });
+
+    var source = new EventSource("/event");
+    source.onmessage = function (event) {
+        console.log(event);
+    };
+
 </script>
 
 {{ Html::script('/js/control.js') }}

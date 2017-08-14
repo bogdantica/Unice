@@ -12,6 +12,12 @@
 */
 Auth::routes();
 
+Route::get('/unices/uid/{uid}', [
+    'as' => 'unice.uid',
+    'uses' => 'Unice\UniceController@byUid'
+]);
+
+
 Route::group([], function () {
 
     Route::get('/unices', [
@@ -31,6 +37,45 @@ Route::group([], function () {
 
 });
 
+
+Route::get('/wsTest', function () {
+
+
+    return view('test');
+
+});
+
+Route::any('/event', function (\Illuminate\Http\Request $req) {
+
+
+    $response = new Symfony\Component\HttpFoundation\StreamedResponse(function () use ($req) {
+
+//        echo 'data: ' . json_encode(['message' => rand(0,10)]) . "\n\n";
+
+        echo 'data:' . json_encode([
+                'request' => $req
+            ])
+
+            . "\n\n";
+
+//        while (true) {
+//
+//            if (rand(0,3)) {
+//                echo 'data: ' . json_encode(['message' => rand(0,10)]) . "\n\n";
+//                ob_flush();
+//                flush();
+//            }
+//            sleep(3);
+//
+//        }
+
+    });
+
+    $response->headers->set('Content-Type', 'text/event-stream');
+
+    return $response;
+
+});
 
 Route::get('/dummyUnice', function () {
     return view('dummyUnice');
