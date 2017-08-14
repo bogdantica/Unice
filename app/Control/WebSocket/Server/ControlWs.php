@@ -55,15 +55,14 @@ class ControlWs extends WebSocketServerAbstract
     {
         echo "\nDisconnected at: " . Carbon::now();
 
-
-        try {
-            $node = $event->getSource()->getConnection()->getCurrentNode();
-            $unice = $node->getUnice();
-            if ($unice) {
-                $unice->offline();
-            }
-        } catch (\Exception $e) {
-        }
+//        try {
+//            $node = $event->getSource()->getConnection()->getCurrentNode();
+//            $unice = $node->getUnice();
+//            if ($unice) {
+//                $unice->offline();
+//            }
+//        } catch (\Exception $e) {
+//        }
     }
 
     /**
