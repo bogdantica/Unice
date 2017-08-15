@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        SupervisorCommand::class
+        SupervisorCommand::class,
+        WebSocketServerRatchetCommand::class
     ];
 
     /**
