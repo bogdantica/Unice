@@ -76,6 +76,8 @@ class ControlWs extends WebSocketServerAbstract
         $node = $connection->getCurrentNode();
         $nodes = collect($connection->getNodes())->reject($node);
         $message = $event->getData()['message'];
+		
+	dump($message);
 
         try {
 
