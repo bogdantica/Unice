@@ -79,6 +79,8 @@ class ControlWs extends WebSocketServerAbstract
 
         dump($message);
 
+        $event->getSource()->send("Message from Server", $node);
+
         return;
         try {
 
