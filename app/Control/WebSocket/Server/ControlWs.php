@@ -46,6 +46,8 @@ class ControlWs extends WebSocketServerAbstract
     public function onOpen(Bucket $event)
     {
         echo "\nConnected at: " . Carbon::now();
+
+        $event->getSource()->send("Welcome", $event->getSource()->getConnection()->getCurrentNode());
     }
 
     /**

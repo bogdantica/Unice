@@ -35,7 +35,8 @@ class WebSocketServerRatchetCommand extends Command
     {
         $server = IoServer::factory(
             new RatchetServer(),
-            9876
+            9876,
+            '127.0.0.1'
         );
 
         $server->run();

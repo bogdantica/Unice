@@ -49,6 +49,8 @@ class RatchetServer implements MessageComponentInterface
         echo "\nNew Connection:" . $conn->resourceId;
         echo "\nat: " . $conn->joinTime;
 
+        $conn->send("Buna");
+
     }
 
     /**
