@@ -3,22 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script
+            src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
 </head>
 <body>
 
+
+<div id="text" class="max-height:400px; overflow:scroll-y; border-width:1px;border-color:black">
+
+</div>
 <script>
 
     function server() {
 
-        var ws = new WebSocket("ws://echo.websocket.org");
+        var ws = new WebSocket("ws://127.0.0.1:9875");
 
-        ws.onopen =
+        ws.onmessage = function (msg, a) {
+            $text.append(msg.data);
+        };
 
-        open = function(ev){
-            console.log(ev);
+        ws.onopen = function () {
+            append('Opened at: ' + new Date().toISOString());
         }
 
+        ws.onerror = function (e, msg) {
+
+            append('Error at: ' + new Date().toISOString());
+
+            $text.append(msg);
+            $text.append(e);
+
+            start();
+        }
+
+        ws.onclose = function () {
+            append('Clossed at: ' + new Date().toISOString());
+
+            start();
+
+        };
+
+        setInterval(function () {
+
+            var random = "Sent From Client: " + Math.random() * 100000;
+            ws.send(random);
+            append(random);
+        }, 5000);
+
     }
+    var $text = $('#text');
+
+    function append(txt) {
+        $text.append("</br></br>" + txt + "</br></br>");
+    }
+
+
+    function start() {
+        setTimeout(server, 2000);
+//        server();
+    }
+
+    start();
+
+
 
 
 </script>

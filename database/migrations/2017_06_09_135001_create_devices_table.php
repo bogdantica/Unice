@@ -12,7 +12,6 @@ class CreateDevicesTable extends Migration {
             $table->integer('unice_id')->unsigned()->index();
             $table->string('name');
             $table->integer('device_type')->unsigned()->index();
-
             $table->timestamps();
             $table->softDeletes();
         });

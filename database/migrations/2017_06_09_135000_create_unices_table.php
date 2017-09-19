@@ -15,11 +15,11 @@ class CreateUnicesTable extends Migration
 
             $table->string('uid')->unique();
 
-            $table->boolean('online')->default(false);
-            $table->string('connection_uid')->nullable();
+            $table->boolean('status')->default(false);
+            $table->timestamp('last_seen')->nullable();
+            $table->string('comm_id')->nullable();
 
             $table->boolean('is_base')->default(false);
-
 
             $table->timestamps();
             $table->softDeletes();

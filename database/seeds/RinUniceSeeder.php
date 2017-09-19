@@ -14,7 +14,7 @@ class RinUniceSeeder extends Seeder
         $unice = \App\Models\Unice\Unice::create(array(
             'name' => 'Rin Unice',
             'uid' => 'rin_unice_1234',
-            'online' => false,
+            'status' => false,
         ));
 
 

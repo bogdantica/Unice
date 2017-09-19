@@ -33,6 +33,7 @@ class WebSocketServerRatchetCommand extends Command
      */
     public function handle()
     {
+
         $server = IoServer::factory(
             new RatchetServer(),
             9876,

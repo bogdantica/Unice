@@ -88,19 +88,16 @@ Route::get('/', function () {
 
 
 Route::get('/test', function () {
+    
 
-
-
-
-
-    $payload = '{"devices":{"room_light_1234":{"uid":"room_light_1234","device_name":"room_light","state":{"state":3,"target":2}}},"commands":[]}';
-
-    $payload = new \App\Control\Unice\SDK\Message\Payload\Payload($payload);
-
-    $unice = \App\Control\Unice\SDK\Unice\Unice::getByUid('rin_unice_1234');
-
-
-    $unice->handlePayload($payload);
+//    $payload = '{"devices":{"room_light_1234":{"uid":"room_light_1234","device_name":"room_light","state":{"state":3,"target":2}}},"commands":[]}';
+//
+//    $payload = new \App\Control\Unice\SDK\Message\Payload\Payload($payload);
+//
+//    $unice = \App\Control\Unice\SDK\Unice\Unice::getByUid('rin_unice_1234');
+//
+//
+//    $unice->handlePayload($payload);
 
 
 

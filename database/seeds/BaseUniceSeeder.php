@@ -14,7 +14,7 @@ class BaseUniceSeeder extends Seeder
         \App\Models\Unice\Unice::create([
             'name' => 'UniceBase',
             'uid' => \App\Models\Unice\Unice::BASE_UID,
-            'online' => false,
+            'status' => false,
             'is_base' => true
         ]);
     }

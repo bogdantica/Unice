@@ -14,7 +14,7 @@ class CreateStateDevicesTable extends Migration {
 
             $table->string('state')->index();
             $table->string('target')->nullable()->index();
-
+            $table->boolean('current_state')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });
